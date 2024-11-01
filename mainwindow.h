@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "layereditorwidget.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -31,7 +33,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    // QWidget *LayerEditorWidget;
+    LayerEditorWidget* layerEditorWidget;
 
 };
 #endif // MAINWINDOW_H

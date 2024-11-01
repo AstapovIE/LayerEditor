@@ -11,19 +11,25 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , layerEditorWidget{new LayerEditorWidget(this)}
 {
     ui->setupUi(this);
 
-    // LayerEditorWidget = new QWidget(this);
+    ui->editorWidgetLayout->addWidget(layerEditorWidget);
 
+//    QWidget* ui->LayerEditorWidget;
+//    ui->layout()->addWidget(layerEditorWidget);
+//    ui->LayerEditorWidget->;
+
+//    setCentralWidget(layerEditorWidget);
     // QPushButton *showLayerPack = new QPushButton(LayerEditorWidget);
     // showLayerPack->setText("click");
-
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete layerEditorWidget;
 }
 
 void MainWindow::on_actionNewFile_triggered()
