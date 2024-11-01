@@ -76,8 +76,8 @@ void MainWindow::on_processorButton_clicked()
         // Запуск processor.exe с параметрами
         QProcess process;
 
-        //QString program = "../../processor.exe"; //если файл в исходниках
-        QString program = "./fake_processor.exe"; // если файл в билде..
+        QString program = "../../fake_processor.exe"; //если файл в исходниках
+        // QString program = "./fake_processor.exe"; // если файл в билде..
 
         QStringList arguments;
         arguments << operation << QString::number(num1) << QString::number(num2);
