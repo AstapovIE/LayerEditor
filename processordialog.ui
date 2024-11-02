@@ -16,18 +16,21 @@
   <widget class="QComboBox" name="operationComboBox">
    <property name="geometry">
     <rect>
-     <x>360</x>
-     <y>260</y>
+     <x>270</x>
+     <y>270</y>
      <width>171</width>
-     <height>71</height>
+     <height>51</height>
     </rect>
+   </property>
+   <property name="currentText">
+    <string/>
    </property>
   </widget>
   <widget class="QTextEdit" name="num1TextEdit">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>260</y>
+     <x>160</x>
+     <y>50</y>
      <width>104</width>
      <height>70</height>
     </rect>
@@ -36,8 +39,8 @@
   <widget class="QTextEdit" name="num2TextEdit">
    <property name="geometry">
     <rect>
-     <x>630</x>
-     <y>260</y>
+     <x>640</x>
+     <y>60</y>
      <width>104</width>
      <height>70</height>
     </rect>
@@ -54,6 +57,100 @@
    </property>
    <property name="text">
     <string>Run</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="sourceFileNameEdit">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>270</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>source file name</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="layer1NameEdit">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>270</y>
+     <width>51</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>L1</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="layer2NameEdit">
+   <property name="geometry">
+    <rect>
+     <x>470</x>
+     <y>270</y>
+     <width>51</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>L2</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="layer3NameEdit">
+   <property name="geometry">
+    <rect>
+     <x>660</x>
+     <y>270</y>
+     <width>51</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>L3</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="outputFileNameEdit">
+   <property name="geometry">
+    <rect>
+     <x>760</x>
+     <y>270</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>output file name</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="sizeEdit">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>530</x>
+     <y>270</y>
+     <width>41</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>size</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="toLabel">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>270</y>
+     <width>31</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>to</string>
    </property>
   </widget>
  </widget>
