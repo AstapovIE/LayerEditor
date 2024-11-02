@@ -1,4 +1,5 @@
 #include "layereditorwidget.h"
+#include <QDebug>
 
 //LayerEditorWidget::LayerEditorWidget(LayerPack& layers, QWidget* parent)
 //    : QWidget(parent), layerPack{layers}
@@ -8,6 +9,7 @@ LayerEditorWidget::LayerEditorWidget(QWidget* parent)
 
 void LayerEditorWidget::setSelectedLayer(std::string layerName) {
     currentLayerName = layerName;
+    qDebug() << layerName;
 }
 
 std::string LayerEditorWidget::getSelectedLayer() const {
