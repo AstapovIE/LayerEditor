@@ -30,6 +30,8 @@ private slots:
 
     void on_processorButton_clicked();
 
+    void on_actionundo_triggered();
+
 private:
     Ui::MainWindow *ui;
 

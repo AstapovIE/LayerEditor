@@ -39,13 +39,39 @@ void MainWindow::on_actionNewFile_triggered()
     msg->exec();
 }
 
-
 void MainWindow::on_actionOpenFile_triggered()
 {
     if (QMessageBox::question(this, "Confirm", "Are you sure you want to open a file?") == QMessageBox::Yes) {
         QString filename = QFileDialog::getOpenFileName(this, "Open File");
-        // Логика открытия файла
-        QMessageBox::information(this, "Open File", "File opened: " + filename);
+
+        if (!filename.isEmpty()) {
+            // Создать объект класса Converter
+            // Converter converter;
+
+            // Передать имя файла в convertJson
+            // converter.convertJson(filename.toStdString());
+
+            // Получить экземпляр LayerPack
+            // LayerPack& layer_pack = converter.getLayerPack();
+
+            // Получить список строк с названиями слоёв
+            // std::vector<std::string> layer_names = layer_pack.get_pack_names();
+            std::vector<std::string> layer_names = {"layer1", "layer2", "layer3", "layer4"};
+
+            // Очистить QListWidget перед добавлением новых элементов
+            ui->listOfLayers->clear();
+
+            // Добавить элементы в QListWidget и центрировать их
+            for (const std::string& name : layer_names) {
+                QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(name));
+                item->setTextAlignment(Qt::AlignCenter);
+                ui->listOfLayers->addItem(item);
+            }
+
+            QMessageBox::information(this, "Open File", "File opened: " + filename);
+        } else {
+            QMessageBox::warning(this, "Open File", "No file selected.");
+        }
     }
 }
 
@@ -66,6 +92,13 @@ void MainWindow::on_actionredo_triggered()
     msg->setText("did redo");
     msg->exec();
 
+}
+
+void MainWindow::on_actionundo_triggered()
+{
+    QMessageBox *msg = new QMessageBox;
+    msg->setText("did undo");
+    msg->exec();
 }
 
 void MainWindow::on_processorButton_clicked()
@@ -146,4 +179,7 @@ void MainWindow::on_processorButton_clicked()
 //         QMessageBox::information(this, "Result", output);
 //     }
 // }
+
+
+
 
