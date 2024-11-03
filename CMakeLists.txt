@@ -27,6 +27,7 @@ add_executable(LayerEditor
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/database)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/layoutEditorWidget)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/processDialog)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/umformer)
 include_directories(${Qt6_INCLUDE_DIR})
 
 target_include_directories(LayerEditor PRIVATE database/src processDialog/src layoutEditorWidget/src)
