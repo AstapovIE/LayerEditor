@@ -14,7 +14,6 @@
 
 
 enum ToolType{
-    NONE,
     SELECT,
     DRAW,
     MOVE,
@@ -35,9 +34,10 @@ void movePolygon(Polygon& polygon, QPointF delta);
 class LayerEditorWidget : public QGraphicsView {
 public:
     LayerEditorWidget(QWidget* parent = nullptr)
-        : QGraphicsView(parent), scaleFactor(1.0)
+        : QGraphicsView(parent)
+        , scaleFactor(1.0)
+        , scene{new QGraphicsScene(this)}
     {
-        scene = new QGraphicsScene(this);
         setScene(scene);
         setRenderHint(QPainter::Antialiasing);
         setSceneRect(-1500, -1500, 3000, 3000);
@@ -97,18 +97,8 @@ protected:
     void mousePressEvent(QMouseEvent* event) override {
         QPointF mousePos = mapToScene(event->pos());
         switch (currentToolType){
-            case NONE: {
-                if (event->button() == Qt::LeftButton) {
-                    setDragMode(QGraphicsView::ScrollHandDrag);
-                    event->accept();
-                }
-                break;
-            }
             case SELECT: {
                 if (event->button() == Qt::LeftButton) {
-                    setDragMode(QGraphicsView::ScrollHandDrag);
-                    event->accept();
-
                     selectedPolygon = insidePolygonIdx(mousePos);
                     if (selectedPolygon != -1) {
                         update();
@@ -179,25 +169,18 @@ protected:
                     update();
                 }
             }
-            case NONE:
             case SELECT:
             case DRAW:
             case ERASE:
                 break;
         }
+        QGraphicsView::mouseMoveEvent(event);
         lastMousePos = mousePos;
     }
 
     void mouseReleaseEvent(QMouseEvent* event) override {
         QPointF mousePos = mapToScene(event->pos());
         switch (currentToolType) {
-            case NONE: {
-                if (event->button() == Qt::LeftButton) {
-                    setDragMode(QGraphicsView::NoDrag);
-                    event->accept();
-                }
-                break;
-            }
             case MOVE:
                 isMovingPolygon = false;
                 break;
@@ -210,49 +193,13 @@ protected:
                 }
                 break;
             }
-            case SELECT:  {
-                if (event->button() == Qt::LeftButton) {
-                    setDragMode(QGraphicsView::NoDrag);
-                    event->accept();
-                }
-                break;
-            }
+            case SELECT:
             case DRAW:
                 break;
         }
         QGraphicsView::mouseReleaseEvent(event);
         lastMousePos = mousePos;
     }
-
-//    void keyPressEvent(QKeyEvent* event) override {
-//        switch (event->key()) {
-//            case Qt::Key_1:
-//                isDrawingNewPolygon = true;
-//                holeDrawingPolygon = -1;
-//                currentToolType = NONE;
-//                break;
-//            case Qt::Key_2:
-//                isDrawingNewPolygon = true;
-//                holeDrawingPolygon = -1;
-//                currentToolType = SELECT;
-//                break;
-//            case Qt::Key_3:
-//                currentToolType = DRAW;
-//                break;
-//            case Qt::Key_4:
-//                isDrawingNewPolygon = true;
-//                holeDrawingPolygon = -1;
-//                currentToolType = MOVE;
-//                break;
-//            case Qt::Key_5:
-//                isDrawingNewPolygon = true;
-//                holeDrawingPolygon = -1;
-//                currentToolType = ERASE;
-//                break;
-//            default:
-//                QGraphicsView::keyPressEvent(event);
-//        }
-//    }
 
     void wheelEvent(QWheelEvent* event) override {
         const qreal scaleFactorStep = 1.15;

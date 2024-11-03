@@ -37,6 +37,14 @@ std::string LayerEditorWidget::getSelectedLayer() const {
 }
 
 void LayerEditorWidget::setCurrentTool(ToolType tool) {
+    if (tool == SELECT) {
+        setDragMode(QGraphicsView::ScrollHandDrag);
+    } else {
+        setDragMode(QGraphicsView::NoDrag);
+    }
+
+    isDrawingNewPolygon = true;
+    holeDrawingPolygon = -1;
     currentToolType = tool;
 }
 
@@ -44,20 +52,3 @@ ToolType LayerEditorWidget::getCurrentTool() const {
     return currentToolType;
 }
 
-//void LayerEditorWidget::paintEvent(QPaintEvent* event) {
-//    QPainter painter(this);
-
-//    painter.setBrush(Qt::blue);
-//    painter.drawRect(200, 100, 150, 70);
-
-//    painter.setBrush(Qt::red);
-//    painter.drawEllipse(160, 130, 70, 70);
-
-//    painter.setBrush(Qt::green);
-//    painter.drawRect(300, 140, 90, 110);
-//}
-
-//void LayerEditorWidget::mousePressEvent(QMouseEvent* e) {}
-//void LayerEditorWidget::mouseDoubleClickEvent(QMouseEvent* e) {}
-//void LayerEditorWidget::mouseMoveEvent(QMouseEvent* e) {}
-//void LayerEditorWidget::mouseReleaseEvent(QMouseEvent* e) {}
