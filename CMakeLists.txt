@@ -30,7 +30,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/processDialog)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/umformer)
 include_directories(${Qt6_INCLUDE_DIR})
 
-target_include_directories(LayerEditor PRIVATE database/src processDialog/src layoutEditorWidget/src)
+target_include_directories(LayerEditor PRIVATE database/src processDialog/src layoutEditorWidget/src umformer/src)
 
 target_link_libraries(LayerEditor
         Qt6::Core
@@ -40,4 +40,5 @@ target_link_libraries(LayerEditor
         database
 		layoutEditorWidget
         processDialog
+		umformer
         )

@@ -1,5 +1,5 @@
-#ifndef UMFORMER_H
-#define UMFORMER_H
+#ifndef ENTITY_H
+#define ENTITY_H
 
 #include <unordered_map>
 #include <vector>
@@ -15,6 +15,7 @@ public:
 
     Point operator+(const Point& other) const;
     Point operator-(const Point& other) const;
+    bool operator==(const Point& other) const;
 
     std::unordered_map<std::string, double> ravel() const;
 };
@@ -31,6 +32,9 @@ public:
     virtual void insert(const Point& point, size_t index) = 0;
     virtual void remove(size_t index) = 0;
     virtual const std::vector<Point>& get_vertices() const = 0;
+
+    virtual Point& operator[](size_t index) = 0;
+    virtual const Point& operator[](size_t index) const = 0;
 };
 
 
@@ -42,8 +46,9 @@ public:
     void insert(const Point& point, size_t index) override;
     void remove(size_t index) override;
     const std::vector<Point>& get_vertices() const override;
-    Point& operator[](size_t index);
-    const Point& operator[](size_t index) const;
+
+    Point& operator[](size_t index) override;
+    const Point& operator[](size_t index) const override;
 };
 
 
@@ -58,12 +63,14 @@ public:
     void insert(const Point& point, size_t index) override;
     void remove(size_t index) override;
     const std::vector<Point>& get_vertices() const override;
-    Point& operator[](size_t index);
-    const Point& operator[](size_t index) const;
+
+    Point& operator[](size_t index) override;
+    const Point& operator[](size_t index) const override;
 
     void add_hole(const Hole& hole);
     void remove_hole(size_t index);
     const std::vector<Hole>& get_holes() const;
+    std::vector<Hole>& get_holes();
 };
 
 
@@ -122,4 +129,4 @@ public:
 };
 
 
-#endif // UMFORMER_H
+#endif // ENTITY_H

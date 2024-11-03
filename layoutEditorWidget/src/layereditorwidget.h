@@ -12,6 +12,9 @@
 
 #include <iostream>
 
+#include "umformer/src/Entity.h"
+//#include "umformer/src/Converter.h"
+
 
 enum ToolType{
     SELECT,
@@ -20,28 +23,11 @@ enum ToolType{
     ERASE
 };
 
-struct Polygon {
-    std::vector<QPointF> vertices;
-    std::vector<std::vector<QPointF>> holes;
-};
-
-bool isInsideSimplePolygon(const std::vector<QPointF>& polygon, QPointF point);
-bool isInsidePolygon(const Polygon& polygon, QPointF point);
-
-void moveSimplePolygon(std::vector<QPointF>& polygon, QPointF delta);
-void movePolygon(Polygon& polygon, QPointF delta);
 
 class LayerEditorWidget : public QGraphicsView {
 public:
-    LayerEditorWidget(QWidget* parent = nullptr)
-        : QGraphicsView(parent)
-        , scaleFactor(1.0)
-        , scene{new QGraphicsScene(this)}
-    {
-        setScene(scene);
-        setRenderHint(QPainter::Antialiasing);
-        setSceneRect(-1500, -1500, 3000, 3000);
-    }
+    LayerEditorWidget(QWidget* parent = nullptr);
+    virtual ~LayerEditorWidget();
 
     void setSelectedLayer(std::string layerName);
     std::string getSelectedLayer() const;
@@ -49,190 +35,58 @@ public:
     void setCurrentTool(ToolType tool);
     ToolType getCurrentTool() const;
 
-    void update() {
-        scene->clear();
+    void setFile(const std::string& filename);
 
-        for (int i=0; i<polygons.size(); ++i) {
-            QPainterPath path;
-            drawSimplePolygon(path, polygons[i].vertices);
-            for (const auto& hole : polygons[i].holes) {
-                drawSimplePolygon(path, hole);
-            }
-            path.setFillRule(Qt::OddEvenFill);
+    void addLayer(const std::string& name);
+    void copyLayer(const std::string& name, const std::string& copyName);
+    void deleteLayer(const std::string& name);
 
-            QGraphicsPathItem *pathItem = new QGraphicsPathItem(path);
-            if (i == selectedPolygon) {
-                pathItem->setBrush(QBrush(Qt::yellow));
-            } else {
-                pathItem->setBrush(QBrush(Qt::green));
-            }
-            scene->addItem(pathItem);
-        }
-    }
+    void autoSaveMode(bool isEnabled);
 
-    virtual ~LayerEditorWidget() {
-        delete scene;
-    }
+    std::vector<std::string> getLayerNames() const;
+
+    void saveAll(std::string filename = "");
+
+    void update();
 
 private:
-    void drawSimplePolygon(QPainterPath& path, const std::vector<QPointF>& polygon) {
-        if (polygon.empty()) return;
-        path.moveTo(polygon[0]);
-        for (int i=1; i<polygon.size(); ++i) {
-            path.lineTo(polygon[i]);
-        }
-        path.closeSubpath();
-    }
+    void drawSimplePolygon(QPainterPath& path, const std::vector<Point>& polygon);
+    int insidePolygonIdx(Point point);
 
-    int insidePolygonIdx(QPointF point) {
-        for (int i=0; i<polygons.size(); ++i) {
-            if (isInsidePolygon(polygons[i], point)) {
-                return i;
-            }
-        }
-        return -1;
-    }
+    void drawLayer(const std::string& layerName, int alpha = 255);
 
 protected:
-    void mousePressEvent(QMouseEvent* event) override {
-        QPointF mousePos = mapToScene(event->pos());
-        switch (currentToolType){
-            case SELECT: {
-                if (event->button() == Qt::LeftButton) {
-                    selectedPolygon = insidePolygonIdx(mousePos);
-                    if (selectedPolygon != -1) {
-                        update();
-                    }
-                }
-                break;
-            }
-            case DRAW: {
-                if (event->button() == Qt::LeftButton) {
-                    if (!isDrawingNewPolygon) {
-                        polygons.back().vertices.push_back(mousePos);
-                    } else if (holeDrawingPolygon != -1) {
-                        if (isInsidePolygon(polygons[holeDrawingPolygon], mousePos)) {
-                            polygons[holeDrawingPolygon].holes.back().push_back(mousePos);
-                        } else {
-                            std::cout << "cant place point here" << std::endl;
-                        }
-                    } else {
-                        holeDrawingPolygon = insidePolygonIdx(mousePos);
-                        if (holeDrawingPolygon == -1) {
-                            polygons.push_back(Polygon());
-                            polygons.back().vertices.push_back(mousePos);
-                            isDrawingNewPolygon = false;
-                        } else {
-                            polygons[holeDrawingPolygon].holes.push_back({});
-                            polygons[holeDrawingPolygon].holes.back().push_back(mousePos);
-                        }
-                    }
-
-                    update();
-                } else if (event->button() == Qt::RightButton) {
-                    isDrawingNewPolygon = true;
-                    holeDrawingPolygon = -1;
-                }
-                break;
-            }
-            case MOVE: {
-                if (event->button() == Qt::LeftButton) {
-                    selectedPolygon = insidePolygonIdx(mousePos);
-                    if (selectedPolygon != -1) {
-                        isMovingPolygon = true;
-                        update();
-                    }
-                }
-                break;
-            }
-            case ERASE: {
-                if (event->button() == Qt::LeftButton) {
-                    selectedPolygon = insidePolygonIdx(mousePos);
-                    if (selectedPolygon != -1) {
-                        isDeletingPolygon = true;
-                        update();
-                    }
-                }
-                break;
-            }
-        }
-        QGraphicsView::mousePressEvent(event);
-        lastMousePos = mousePos;
-    }
-
-    void mouseMoveEvent(QMouseEvent* event) override {
-        QPointF mousePos = mapToScene(event->pos());
-        switch (currentToolType) {
-            case MOVE: {
-                if (isMovingPolygon && selectedPolygon != -1) {
-                    movePolygon(polygons[selectedPolygon], mousePos - lastMousePos);
-                    update();
-                }
-            }
-            case SELECT:
-            case DRAW:
-            case ERASE:
-                break;
-        }
-        QGraphicsView::mouseMoveEvent(event);
-        lastMousePos = mousePos;
-    }
-
-    void mouseReleaseEvent(QMouseEvent* event) override {
-        QPointF mousePos = mapToScene(event->pos());
-        switch (currentToolType) {
-            case MOVE:
-                isMovingPolygon = false;
-                break;
-            case ERASE: {
-                if (isDeletingPolygon && selectedPolygon != -1) {
-                    polygons.erase(polygons.begin() + selectedPolygon);
-                    isMovingPolygon = false;
-                    selectedPolygon = -1;
-                    update();
-                }
-                break;
-            }
-            case SELECT:
-            case DRAW:
-                break;
-        }
-        QGraphicsView::mouseReleaseEvent(event);
-        lastMousePos = mousePos;
-    }
-
-    void wheelEvent(QWheelEvent* event) override {
-        const qreal scaleFactorStep = 1.15;
-        const qreal minScaleFactor = 0.3333;
-        const qreal maxScaleFactor = 5;
-
-        if (event->angleDelta().y() > 0 && scaleFactor <= maxScaleFactor) {
-            scale(scaleFactorStep, scaleFactorStep);
-            scaleFactor *= scaleFactorStep;
-        } else if (event->angleDelta().y() < 0 && scaleFactor >= minScaleFactor) {
-            scale(1 / scaleFactorStep, 1 / scaleFactorStep);
-            scaleFactor /= scaleFactorStep;
-        }
-    }
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
 private:
     QGraphicsScene* scene;
 
-    qreal scaleFactor;
+//    Converter converter;
+//    LayerPack& layerPack;
+    LayerPack layerPack;
 
-    ToolType currentToolType;
-
-    std::vector<Polygon> polygons;
+    qreal scaleFactor = 1.0;
     bool isDrawingNewPolygon = true;
     int holeDrawingPolygon = -1;
     int selectedPolygon = -1;
 
     bool isMovingPolygon = false;
-    QPointF lastMousePos;
+    Point lastMousePos;
 
     bool isDeletingPolygon = false;
 
     std::string currentLayerName;
+    ToolType currentToolType;
+
+    bool isAutoSaveModeEnabled = false;
+
+    const std::vector<QColor> layerColors = {
+        Qt::green, Qt::blue, Qt::red, Qt::cyan, Qt::magenta, Qt::yellow, Qt::black
+    };
+    const QColor selectColor = Qt::lightGray;
 };
 
 
