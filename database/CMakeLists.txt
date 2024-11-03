@@ -15,8 +15,8 @@ add_library(database ${SOURCES})
 target_include_directories(database PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 target_link_libraries(database
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::Sql)
+	Qt5::Core
+	Qt5::Widgets
+	Qt5::Sql)
 
 #add_executable(${PROJECT_NAME} ${source_list})
