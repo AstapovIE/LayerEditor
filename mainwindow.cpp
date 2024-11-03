@@ -20,26 +20,25 @@ MainWindow::MainWindow(QWidget *parent)
     ui->editorWidgetLayout->addWidget(layerEditorWidget);
 
     // Добавление кнопок в toolBar
-    //QAction *noneAction = new QAction("None", this);
     QAction *selectAction = new QAction("Select", this);
     QAction *drawAction = new QAction("Draw", this);
     QAction *moveAction = new QAction("Move", this);
     QAction *eraseAction = new QAction("Erase", this);
 
-    //ui->toolBar->addAction(noneAction);
     ui->toolBar->addAction(selectAction);
     ui->toolBar->addAction(drawAction);
     ui->toolBar->addAction(moveAction);
     ui->toolBar->addAction(eraseAction);
 
     // Связь сигналов с обработчиками
-    //connect(noneAction, &QAction::triggered, this, &MainWindow::onNoneToolClicked);
     connect(selectAction, &QAction::triggered, this, &MainWindow::onSelectToolClicked);
     connect(drawAction, &QAction::triggered, this, &MainWindow::onDrawToolClicked);
     connect(moveAction, &QAction::triggered, this, &MainWindow::onMoveToolClicked);
     connect(eraseAction, &QAction::triggered, this, &MainWindow::onEraseToolClicked);
 
-    connect(ui->autoSaveCheckBox, &QCheckBox::checkStateChanged, this, &MainWindow::on_autoSaveCheckBox_stateChanged);
+    //connect(ui->autoSaveCheckBox, &QCheckBox::checkStateChanged, this, &MainWindow::on_autoSaveCheckBox_stateChanged);
+    connect(ui->autoSaveCheckBox, &QCheckBox::stateChanged, this, &MainWindow::on_autoSaveCheckBox_stateChanged);
+
 
 
 //    QWidget* ui->LayerEditorWidget;
@@ -125,9 +124,6 @@ void MainWindow::on_actionundo_triggered()
     msg->exec();
 }
 
-// void MainWindow::onNoneToolClicked() {
-//     handleToolSelection(NONE);
-// }
 
 void MainWindow::onSelectToolClicked() {
     handleToolSelection(SELECT);

@@ -28,7 +28,6 @@ private slots:
     void on_actionredo_triggered();
     void on_actionundo_triggered();
 
-    //void onNoneToolClicked();
     void onSelectToolClicked();
     void onDrawToolClicked();
     void onMoveToolClicked();
