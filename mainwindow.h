@@ -28,7 +28,7 @@ private slots:
     void on_actionredo_triggered();
     void on_actionundo_triggered();
 
-    void onNoneToolClicked();
+    //void onNoneToolClicked();
     void onSelectToolClicked();
     void onDrawToolClicked();
     void onMoveToolClicked();
@@ -37,9 +37,11 @@ private slots:
     void on_processorButton_clicked();
 
     void on_addNewLayer_clicked();
+    void on_copyLayer_clicked();
     void on_deleteLayer_clicked();
 
     void on_autoSaveCheckBox_stateChanged(int state);
+
 
 private:
     Ui::MainWindow *ui;

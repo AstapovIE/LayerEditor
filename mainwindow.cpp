@@ -20,20 +20,20 @@ MainWindow::MainWindow(QWidget *parent)
     ui->editorWidgetLayout->addWidget(layerEditorWidget);
 
     // Добавление кнопок в toolBar
-    QAction *noneAction = new QAction("None", this);
+    //QAction *noneAction = new QAction("None", this);
     QAction *selectAction = new QAction("Select", this);
     QAction *drawAction = new QAction("Draw", this);
     QAction *moveAction = new QAction("Move", this);
     QAction *eraseAction = new QAction("Erase", this);
 
-    ui->toolBar->addAction(noneAction);
+    //ui->toolBar->addAction(noneAction);
     ui->toolBar->addAction(selectAction);
     ui->toolBar->addAction(drawAction);
     ui->toolBar->addAction(moveAction);
     ui->toolBar->addAction(eraseAction);
 
     // Связь сигналов с обработчиками
-    connect(noneAction, &QAction::triggered, this, &MainWindow::onNoneToolClicked);
+    //connect(noneAction, &QAction::triggered, this, &MainWindow::onNoneToolClicked);
     connect(selectAction, &QAction::triggered, this, &MainWindow::onSelectToolClicked);
     connect(drawAction, &QAction::triggered, this, &MainWindow::onDrawToolClicked);
     connect(moveAction, &QAction::triggered, this, &MainWindow::onMoveToolClicked);
@@ -125,9 +125,9 @@ void MainWindow::on_actionundo_triggered()
     msg->exec();
 }
 
-void MainWindow::onNoneToolClicked() {
-    handleToolSelection(NONE);
-}
+// void MainWindow::onNoneToolClicked() {
+//     handleToolSelection(NONE);
+// }
 
 void MainWindow::onSelectToolClicked() {
     handleToolSelection(SELECT);
@@ -232,6 +232,34 @@ void MainWindow::on_addNewLayer_clicked()
     QMessageBox::information(this, "Layer Added", "New layer '" + newLayerName + "' has been added.");
 }
 
+void MainWindow::on_copyLayer_clicked()
+{
+    QListWidgetItem *selectedItem = ui->listOfLayers->currentItem();
+
+    if (selectedItem)
+    {
+        QString layerName = selectedItem->text();
+
+        // Создание нового слоя с именем по умолчанию
+        static int layerCounter = 1;
+        QString copyLayerName = "CopyLayer" + QString::number(layerCounter++);
+        QListWidgetItem *newItem = new QListWidgetItem(copyLayerName);
+        newItem->setTextAlignment(Qt::AlignCenter);
+        ui->listOfLayers->addItem(newItem);
+
+        // Вызов метода копирования слоя
+        //layerEditorWidget->copyLayer(layerName.toStdString(), copyLayerName.toStdString());
+
+        // Показ сообщения
+        QMessageBox::information(this, "Layer Copied", "Layer '" + copyLayerName + "' has been added.");
+    }
+    else
+    {
+        // Показ сообщения, если не выбран слой
+        QMessageBox::warning(this, "Copy Layer", "Select a layer to copy.");
+    }
+}
+
 void MainWindow::on_deleteLayer_clicked()
 {
     QListWidgetItem *selectedItem = ui->listOfLayers->currentItem();
@@ -295,6 +323,9 @@ void MainWindow::on_autoSaveCheckBox_stateChanged(int state)
 //         QMessageBox::information(this, "Result", output);
 //     }
 // }
+
+
+
 
 
 

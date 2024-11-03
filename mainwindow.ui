@@ -75,6 +75,19 @@
       <string>AutoSaveMode</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="copyLayer">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>410</y>
+       <width>71</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>copy</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QPushButton" name="processorButton">
     <property name="geometry">
