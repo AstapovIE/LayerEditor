@@ -13,7 +13,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , layerEditorWidget{new LayerEditorWidget(this)}
+    , layerEditorWidget(new LayerEditorWidget(this))
 {
     ui->setupUi(this);
 

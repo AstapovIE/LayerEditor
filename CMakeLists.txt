@@ -25,10 +25,11 @@ add_executable(LayerEditor
       )
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/database)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/layoutEditorWidget)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/processDialog)
 include_directories(${Qt6_INCLUDE_DIR})
 
-target_include_directories(LayerEditor PRIVATE database/src processDialog/src)
+target_include_directories(LayerEditor PRIVATE database/src processDialog/src layoutEditorWidget/src)
 
 target_link_libraries(LayerEditor
         Qt6::Core
@@ -36,5 +37,6 @@ target_link_libraries(LayerEditor
         Qt6::Widgets
         Qt6::Sql
         database
+		layoutEditorWidget
         processDialog
         )
