@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "layoutEditorWidget/src/layereditorwidget.h"
+#include "UndoRedoManager.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -45,6 +46,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     LayerEditorWidget* layerEditorWidget;
+    UndoRedoManager* manager;
     QString filename; // Переменная для хранения имени текущего файла
 
 };

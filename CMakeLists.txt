@@ -9,7 +9,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt5 COMPONENTS
+find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
@@ -36,10 +36,10 @@ include_directories(${Qt6_INCLUDE_DIR})
 target_include_directories(LayerEditor PRIVATE database/src processDialog/src layoutEditorWidget/src)
 
 target_link_libraries(LayerEditor
-        Qt5::Core
-        Qt5::Gui
-        Qt5::Widgets
-        Qt5::Sql
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        Qt6::Sql
         database
 		layoutEditorWidget
         processDialog

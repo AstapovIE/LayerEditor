@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->editorWidgetLayout->addWidget(layerEditorWidget);
 
+    manager = new UndoRedoManager();
+
     // Добавление кнопок в toolBar
     QAction *selectAction = new QAction("Select", this);
     QAction *drawAction = new QAction("Draw", this);
@@ -36,14 +38,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(moveAction, &QAction::triggered, this, &MainWindow::onMoveToolClicked);
     connect(eraseAction, &QAction::triggered, this, &MainWindow::onEraseToolClicked);
 
-<<<<<<< HEAD
     //connect(ui->autoSaveCheckBox, &QCheckBox::checkStateChanged, this, &MainWindow::on_autoSaveCheckBox_stateChanged);
     connect(ui->autoSaveCheckBox, &QCheckBox::stateChanged, this, &MainWindow::on_autoSaveCheckBox_stateChanged);
-
-=======
-    connect(ui->autoSaveCheckBox, &QCheckBox::stateChanged, this, &MainWindow::on_autoSaveCheckBox_stateChanged);
->>>>>>> main
-
 
 //    QWidget* ui->LayerEditorWidget;
 //    ui->layout()->addWidget(layerEditorWidget);
@@ -116,6 +112,7 @@ void MainWindow::on_actionSaveFile_triggered()
 void MainWindow::on_actionredo_triggered()
 {
     QMessageBox *msg = new QMessageBox;
+    manager->redo();
     msg->setText("did redo");
     msg->exec();
 
@@ -124,6 +121,7 @@ void MainWindow::on_actionredo_triggered()
 void MainWindow::on_actionundo_triggered()
 {
     QMessageBox *msg = new QMessageBox;
+    manager->undo();
     msg->setText("did undo");
     msg->exec();
 }
