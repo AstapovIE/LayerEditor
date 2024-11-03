@@ -40,8 +40,7 @@ private slots:
 
 
     void on_addNewLayer_clicked();
-
-    void on_pushButton_2_clicked();
+    void on_deleteLayer_clicked();
 
 private:
     Ui::MainWindow *ui;

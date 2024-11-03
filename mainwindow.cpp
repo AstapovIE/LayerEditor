@@ -205,8 +205,7 @@ void MainWindow::on_addNewLayer_clicked()
     QMessageBox::information(this, "Layer Added", "New layer '" + newLayerName + "' has been added.");
 }
 
-
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::on_deleteLayer_clicked()
 {
     QListWidgetItem *selectedItem = ui->listOfLayers->currentItem();
 
@@ -229,6 +228,7 @@ void MainWindow::on_pushButton_2_clicked()
         QMessageBox::warning(this, "Delete Layer", "Select a layer to delete.");
     }
 }
+
 
 
 // void MainWindow::on_processorButton_clicked()
@@ -256,6 +256,9 @@ void MainWindow::on_pushButton_2_clicked()
 //         QMessageBox::information(this, "Result", output);
 //     }
 // }
+
+
+
 
 
 
