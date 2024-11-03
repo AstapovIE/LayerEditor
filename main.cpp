@@ -3,14 +3,17 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDir>
+#include <UndoRedoManager.h>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
     w.setWindowTitle("LayerEditor");
-
     w.show();
+
+    UndoRedoManager man = UndoRedoManager();
+    man.doChanges("/media/psf/Проекты по программированию/Layer Editor/build-LayerEditor-Desktop-Debug/database/test.txt");
     return a.exec();
 }
 
@@ -41,7 +44,7 @@ int main(int argc, char *argv[])
 
 // void convertJson(const std::string& filename) - функция считывает имя файла топологии , после чего подгружает его данные. Проверяет, что файл существует, иначе создаёт пустой, затем парсит файл json, далее начинает создавать объекты классов Polygon, Layer после чего сохраняет их в LayerPack, связанный с ключом названием файла, для дальнейшего хранения в нем и доступа через методы класса LayerPack. Используется внешняя библиотека RapidJson. В случае проблем с файлом выкидывает сообщение об ошибке.
 
-// void saveToJson(const std::string& filename) -  функция обратная convertJson. Уже существующие объекты классов Polygon, Layer, лежащие в  LayerPack она преобразовывает в текстовую информацию, которую записывает в файл, если он существует, если же его нет, то создаёт новый пустой файл и записывает туда. Так же происходит проверка перед загрузкой на правильный тип данных, если было несовпадение, то выбрасывает сообщение об ошибке. Используется внешняя библиотека RapidJson.
+// void saveToJson(const std::string& filename) -  функция обратная convertJson. Уже существующие объекты классов Polygon, Layer, лежащие в  LayerPack она преобразовывает в текстовую информацию, которую записывает в файл, если он существует, если же его нет, то создаёт новый пустой файл и записывает туда. Так же происходит проверка перед загрузкой на правильный тип данных, если было несовпадение, то выбрасывает сообщение об ошибке. Используется внешняя библиотека RapidJson.
 
 // LayerPack& getLayerPack() -- это функция возвращающая экземпляр класса LayerPack layerpack, который был создан в void convertJson(const std::string& filename) и заполнен данными, считанными из файла.Сейчас при вызове actionOpenFile  происходит следующее:
 // ```void MainWindow::on_actionOpenFile_triggered()
