@@ -62,6 +62,19 @@
       <string>delete</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="autoSaveCheckBox">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>460</y>
+       <width>101</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>AutoSaveMode</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QPushButton" name="processorButton">
     <property name="geometry">

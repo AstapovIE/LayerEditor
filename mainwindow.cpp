@@ -6,6 +6,8 @@
 #include <QFileDialog>
 #include "processordialog.h" // Измените на новый заголовок
 #include <QProcess>
+#include <QDebug>
+#include <QFileInfo>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -18,21 +20,27 @@ MainWindow::MainWindow(QWidget *parent)
     ui->editorWidgetLayout->addWidget(layerEditorWidget);
 
     // Добавление кнопок в toolBar
+    QAction *noneAction = new QAction("None", this);
     QAction *selectAction = new QAction("Select", this);
     QAction *drawAction = new QAction("Draw", this);
     QAction *moveAction = new QAction("Move", this);
     QAction *eraseAction = new QAction("Erase", this);
 
+    ui->toolBar->addAction(noneAction);
     ui->toolBar->addAction(selectAction);
     ui->toolBar->addAction(drawAction);
     ui->toolBar->addAction(moveAction);
     ui->toolBar->addAction(eraseAction);
 
     // Связь сигналов с обработчиками
+    connect(noneAction, &QAction::triggered, this, &MainWindow::onNoneToolClicked);
     connect(selectAction, &QAction::triggered, this, &MainWindow::onSelectToolClicked);
     connect(drawAction, &QAction::triggered, this, &MainWindow::onDrawToolClicked);
     connect(moveAction, &QAction::triggered, this, &MainWindow::onMoveToolClicked);
     connect(eraseAction, &QAction::triggered, this, &MainWindow::onEraseToolClicked);
+
+    connect(ui->autoSaveCheckBox, &QCheckBox::checkStateChanged, this, &MainWindow::on_autoSaveCheckBox_stateChanged);
+
 
 //    QWidget* ui->LayerEditorWidget;
 //    ui->layout()->addWidget(layerEditorWidget);
@@ -59,7 +67,9 @@ void MainWindow::on_actionNewFile_triggered()
 void MainWindow::on_actionOpenFile_triggered()
 {
     if (QMessageBox::question(this, "Confirm", "Are you sure you want to open a file?") == QMessageBox::Yes) {
-        QString filename = QFileDialog::getOpenFileName(this, "Open File");
+        //QString filename = QFileDialog::getOpenFileName(this, "Open File");
+        filename = QFileDialog::getOpenFileName(this, "Open File");
+        qDebug() << "selected file: " << filename;
 
         if (!filename.isEmpty()) {
             //layerEditorWidget->setFilename(filename.toStdString());
@@ -77,8 +87,8 @@ void MainWindow::on_actionOpenFile_triggered()
                 item->setTextAlignment(Qt::AlignCenter);
                 ui->listOfLayers->addItem(item);
             }
-
-            QMessageBox::information(this, "Open File", "File opened: " + filename);
+            QFileInfo fileInfo(filename);
+            QMessageBox::information(this, "Open File", "File " + fileInfo.fileName() + " opened");
         } else {
             QMessageBox::warning(this, "Open File", "No file selected.");
         }
@@ -89,9 +99,13 @@ void MainWindow::on_actionOpenFile_triggered()
 void MainWindow::on_actionSaveFile_triggered()
 {
     if (QMessageBox::question(this, "Confirm", "Are you sure you want to save the file?") == QMessageBox::Yes) {
-        QString filename = QFileDialog::getSaveFileName(this, "Save File");
+        //сохранение изменений
+        //layerEditorWidget->saveFile(filename);
+        //QString filename = QFileDialog::getSaveFileName(this, "Save File");
         // Логика сохранения файла
-        QMessageBox::information(this, "Save File", "File saved: " + filename);
+
+        QFileInfo fileInfo(filename);
+        QMessageBox::information(this, "Save File", "File " + fileInfo.fileName() + " saved: ");
     }
 }
 
@@ -109,6 +123,10 @@ void MainWindow::on_actionundo_triggered()
     QMessageBox *msg = new QMessageBox;
     msg->setText("did undo");
     msg->exec();
+}
+
+void MainWindow::onNoneToolClicked() {
+    handleToolSelection(NONE);
 }
 
 void MainWindow::onSelectToolClicked() {
@@ -142,6 +160,15 @@ void MainWindow::handleToolSelection(ToolType tool) {
 void MainWindow::on_processorButton_clicked()
 {
     ProcessorDialog dialog(this);
+
+    // Вывод только имени текущего файла
+    QFileInfo fileInfo(filename);
+    QString shortFileName = fileInfo.fileName();
+    qDebug() << "Current filename:" << shortFileName;
+    dialog.setSourceFileName(shortFileName);
+
+    //сохранение изменений
+    //layerEditorWidget->saveFile(filename);
 
     if (dialog.exec() == QDialog::Accepted) {
         QString sourceFileName = dialog.getSourceFileName();
@@ -229,6 +256,18 @@ void MainWindow::on_deleteLayer_clicked()
     }
 }
 
+void MainWindow::on_autoSaveCheckBox_stateChanged(int state)
+{
+    if (state == Qt::Checked) {
+        // Включение режима авто-сохранения
+        qDebug() << "autoSaveMode ON";
+        //layerEditorWidget->autoSaveMode(true);
+    } else {
+        // Отключение режима авто-сохранения
+        qDebug() << "autoSaveMode OFF";
+        //layerEditorWidget->autoSaveMode(false);
+    }
+}
 
 
 // void MainWindow::on_processorButton_clicked()

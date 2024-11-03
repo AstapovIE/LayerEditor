@@ -24,6 +24,11 @@ QString ProcessorDialog::getSourceFileName() const
     return ui->sourceFileNameEdit->text();
 }
 
+void ProcessorDialog::setSourceFileName(const QString &filename)
+{
+    ui->sourceFileNameEdit->setText(filename);
+}
+
 QString ProcessorDialog::getLayer1Name() const
 {
     return ui->layer1NameEdit->text();
