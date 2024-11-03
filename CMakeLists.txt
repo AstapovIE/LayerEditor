@@ -31,9 +31,10 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/database)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/layoutEditorWidget)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/processDialog)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/umformer)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/helpSystem)
 include_directories(${Qt6_INCLUDE_DIR})
 
-target_include_directories(LayerEditor PRIVATE database/src processDialog/src layoutEditorWidget/src)
+target_include_directories(LayerEditor PRIVATE database/src processDialog/src layoutEditorWidget/src helpSystem/src)
 
 target_link_libraries(LayerEditor
         Qt5::Core
@@ -41,6 +42,7 @@ target_link_libraries(LayerEditor
         Qt5::Widgets
         Qt5::Sql
         database
-		layoutEditorWidget
+        layoutEditorWidget
         processDialog
+        HelpSystem
         )

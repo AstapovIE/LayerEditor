@@ -12,8 +12,7 @@ int main(int argc, char *argv[])
     w.setWindowTitle("LayerEditor");
     w.show();
 
-    UndoRedoManager man = UndoRedoManager();
-    man.doChanges("/media/psf/Проекты по программированию/Layer Editor/build-LayerEditor-Desktop-Debug/database/test.txt");
+    UndoRedoManager manager = UndoRedoManager();
     return a.exec();
 }
 
