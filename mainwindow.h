@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "layereditorwidget.h"
+#include "layoutEditorWidget/src/layereditorwidget.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -18,9 +18,6 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
-//private:
-
 
 private slots:
     void handleToolSelection(ToolType tool);
