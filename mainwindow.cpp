@@ -36,9 +36,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(moveAction, &QAction::triggered, this, &MainWindow::onMoveToolClicked);
     connect(eraseAction, &QAction::triggered, this, &MainWindow::onEraseToolClicked);
 
+<<<<<<< HEAD
     //connect(ui->autoSaveCheckBox, &QCheckBox::checkStateChanged, this, &MainWindow::on_autoSaveCheckBox_stateChanged);
     connect(ui->autoSaveCheckBox, &QCheckBox::stateChanged, this, &MainWindow::on_autoSaveCheckBox_stateChanged);
 
+=======
+    connect(ui->autoSaveCheckBox, &QCheckBox::stateChanged, this, &MainWindow::on_autoSaveCheckBox_stateChanged);
+>>>>>>> main
 
 
 //    QWidget* ui->LayerEditorWidget;
