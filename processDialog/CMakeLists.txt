@@ -15,8 +15,8 @@ add_library(processDialog ${SOURCES})
 target_include_directories(processDialog PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 target_link_libraries(processDialog
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::Sql)
+    Qt6::Core
+    Qt6::Widgets
+    Qt6::Sql)
 
 #add_executable(${PROJECT_NAME} ${source_list})
