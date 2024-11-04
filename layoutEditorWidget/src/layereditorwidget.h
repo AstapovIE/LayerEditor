@@ -14,6 +14,7 @@
 
 #include "umformer/src/Entity.h"
 #include "umformer/src/umformer.h"
+#include "database/src/UndoRedoManager.h"
 
 
 enum ToolType{
@@ -35,8 +36,11 @@ public:
     void setCurrentTool(ToolType tool);
     ToolType getCurrentTool() const;
 
+    void redo();
+    void undo();
+
     void setFile(const std::string& filename);
-    void saveAll(std::string filename = "");
+    void saveAll(std::string filename = "", bool isForRedoUndo = false);
 
     void addLayer(const std::string& name);
     void copyLayer(const std::string& name, const std::string& copyName);
@@ -66,6 +70,8 @@ private:
     Converter converter;
     LayerPack& layerPack;
 
+    UndoRedoManager undoRedoManager;
+
     qreal scaleFactor = 1.0;
     bool isDrawingNewPolygon = true;
     int holeDrawingPolygon = -1;
@@ -80,6 +86,7 @@ private:
     ToolType currentToolType;
 
     bool isAutoSaveModeEnabled = false;
+    std::string currentFileName;
 
     const std::vector<QColor> layerColors = {
         Qt::green, Qt::blue, Qt::red, Qt::cyan, Qt::magenta, Qt::yellow,

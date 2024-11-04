@@ -33,6 +33,22 @@ namespace {
             }
         }
     }
+
+    std::string generateFileName(bool isForRedoUndo) {
+        std::filesystem::path currentSrcFile = __FILE__;
+        std::filesystem::path currentDir = currentSrcFile.parent_path().parent_path().parent_path();
+        if (isForRedoUndo) {
+            static int redoUndoFileNumber = 0;
+            currentDir += "/database/filebuffer";
+            return std::string(currentDir) + "/layout_" + std::to_string(redoUndoFileNumber++) + ".json";
+        } else {
+            auto t = std::time(nullptr);
+            auto tm = *std::localtime(&t);
+            std::stringstream transTime;
+            transTime << std::put_time(&tm, "%d-%m-%Y_%H-%M-%S");
+            return std::string(currentDir) + "/layout_" + transTime.str() + ".json";
+        }
+    }
 }
 
 
@@ -50,7 +66,7 @@ LayerEditorWidget::LayerEditorWidget(QWidget* parent)
 void LayerEditorWidget::setSelectedLayer(std::string layerName) {
     selectedPolygon = -1;
     currentLayerName = layerName;
-    update();
+    update(false);
 }
 
 std::string LayerEditorWidget::getSelectedLayer() const {
@@ -73,7 +89,7 @@ ToolType LayerEditorWidget::getCurrentTool() const {
     return currentToolType;
 }
 
-void LayerEditorWidget::update() {
+void LayerEditorWidget::update(bool saveForRedoUndo) {
     scene->clear();
 
     for (const auto& [layerName, Layer] : layerPack.get_layers_map()) {
@@ -83,7 +99,13 @@ void LayerEditorWidget::update() {
     }
     drawLayer(currentLayerName);
 
-    saveAll();
+    if (isAutoSaveModeEnabled) {
+        saveAll();
+    }
+    if (saveForRedoUndo) {
+        auto filename = saveAll("", true);
+        undoRedoManager.doChanges(QString(filename.c_str()));
+    }
 }
 
 void LayerEditorWidget::drawLayer(const std::string& layerName, int alpha) {
@@ -146,7 +168,7 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
             if (event->button() == Qt::LeftButton) {
                 selectedPolygon = insidePolygonIdx(mousePos);
                 if (selectedPolygon != -1) {
-                    update();
+                    update(false);
                 }
             }
             break;
@@ -184,7 +206,7 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
                 selectedPolygon = insidePolygonIdx(mousePos);
                 if (selectedPolygon != -1) {
                     isMovingPolygon = true;
-                    update();
+                    update(false);
                 }
             }
             break;
@@ -194,7 +216,7 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
                 selectedPolygon = insidePolygonIdx(mousePos);
                 if (selectedPolygon != -1) {
                     isDeletingPolygon = true;
-                    update();
+                    update(false);
                 }
             }
             break;
@@ -281,22 +303,38 @@ std::vector<std::string> LayerEditorWidget::getLayerNames() const {
 
 void LayerEditorWidget::autoSaveMode(bool isEnabled) {
     isAutoSaveModeEnabled = isEnabled;
+    if (isEnabled) {
+        saveAll();
+    }
 }
 
 void LayerEditorWidget::setFile(const std::string& filename) {
-//    converter.loadJson(filename);
-    converter.loadJson("/home/k1ps/QtProjects/LayerEditor/database/filebuffer/layout_in.json");
+    converter.loadJson(filename);
+    currentFileName = filename;
+    update();
+//    converter.loadJson("/home/k1ps/QtProjects/LayerEditor/database/filebuffer/layout_in.json");
 }
 
-void LayerEditorWidget::saveAll(std::string filename) {
-    if (filename.empty()) {
-        auto t = std::time(nullptr);
-        auto tm = *std::localtime(&t);
-        std::stringstream transTime;
-        transTime << std::put_time(&tm, "%d-%m-%Y %H-%M-%S");
-        filename = "layerpack_" + transTime.str();
+std::string LayerEditorWidget::saveAll(std::string filename, bool isForRedoUndo) {
+    if (isForRedoUndo) {
+        filename = generateFileName(true);
+    } else if (filename.empty() && !currentFileName.empty()) {
+        filename = currentFileName;
+    } else if (filename.empty() && currentFileName.empty()) {
+        filename = generateFileName(false);
     }
-    filename = "/home/k1ps/QtProjects/LayerEditor/database/filebuffer/layout_out.json";
     converter.saveToJson(filename);
+    return filename;
 }
 
+void LayerEditorWidget::redo() {
+    auto filename = undoRedoManager.redo();
+    converter.loadJson(filename.toStdString());
+    update(false);
+}
+
+void LayerEditorWidget::undo() {
+    auto filename = undoRedoManager.undo();
+    converter.loadJson(filename.toStdString());
+    update(false);
+}
