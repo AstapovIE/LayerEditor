@@ -13,7 +13,7 @@
 #include <iostream>
 
 #include "umformer/src/Entity.h"
-//#include "umformer/src/Converter.h"
+#include "umformer/src/umformer.h"
 
 
 enum ToolType{
@@ -36,6 +36,7 @@ public:
     ToolType getCurrentTool() const;
 
     void setFile(const std::string& filename);
+    void saveAll(std::string filename = "");
 
     void addLayer(const std::string& name);
     void copyLayer(const std::string& name, const std::string& copyName);
@@ -44,8 +45,6 @@ public:
     void autoSaveMode(bool isEnabled);
 
     std::vector<std::string> getLayerNames() const;
-
-    void saveAll(std::string filename = "");
 
     void update();
 
@@ -64,9 +63,8 @@ protected:
 private:
     QGraphicsScene* scene;
 
-//    Converter converter;
-//    LayerPack& layerPack;
-    LayerPack layerPack;
+    Converter converter;
+    LayerPack& layerPack;
 
     qreal scaleFactor = 1.0;
     bool isDrawingNewPolygon = true;
@@ -84,9 +82,9 @@ private:
     bool isAutoSaveModeEnabled = false;
 
     const std::vector<QColor> layerColors = {
-        Qt::green, Qt::blue, Qt::red, Qt::cyan, Qt::magenta, Qt::yellow, Qt::black
+        Qt::green, Qt::blue, Qt::red, Qt::cyan, Qt::magenta, Qt::yellow,
+        Qt::darkGreen, Qt::darkBlue, Qt::darkRed, Qt::darkCyan, Qt::darkMagenta, Qt::darkYellow
     };
-    const QColor selectColor = Qt::lightGray;
 };
 
 

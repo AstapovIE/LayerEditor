@@ -40,7 +40,7 @@ LayerEditorWidget::LayerEditorWidget(QWidget* parent)
     : QGraphicsView(parent)
     , scaleFactor(1.0)
     , scene{new QGraphicsScene(this)}
-//    , layerPack(converter.getLayerPack())
+    , layerPack(converter.getLayerPack())
 {
     setScene(scene);
     setRenderHint(QPainter::Antialiasing);
@@ -82,6 +82,8 @@ void LayerEditorWidget::update() {
         }
     }
     drawLayer(currentLayerName);
+
+    saveAll();
 }
 
 void LayerEditorWidget::drawLayer(const std::string& layerName, int alpha) {
@@ -282,7 +284,8 @@ void LayerEditorWidget::autoSaveMode(bool isEnabled) {
 }
 
 void LayerEditorWidget::setFile(const std::string& filename) {
-//    converter.convertJson(filename);
+//    converter.loadJson(filename);
+    converter.loadJson("/home/k1ps/QtProjects/LayerEditor/database/filebuffer/layout_in.json");
 }
 
 void LayerEditorWidget::saveAll(std::string filename) {
@@ -293,5 +296,7 @@ void LayerEditorWidget::saveAll(std::string filename) {
         transTime << std::put_time(&tm, "%d-%m-%Y %H-%M-%S");
         filename = "layerpack_" + transTime.str();
     }
-//    converter.saveToJson(filename);
+    filename = "/home/k1ps/QtProjects/LayerEditor/database/filebuffer/layout_out.json";
+    converter.saveToJson(filename);
 }
+
