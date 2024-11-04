@@ -40,7 +40,7 @@ public:
     void undo();
 
     void setFile(const std::string& filename);
-    void saveAll(std::string filename = "", bool isForRedoUndo = false);
+    std::string saveAll(std::string filename = "", bool isForRedoUndo = false);
 
     void addLayer(const std::string& name);
     void copyLayer(const std::string& name, const std::string& copyName);
@@ -50,7 +50,7 @@ public:
 
     std::vector<std::string> getLayerNames() const;
 
-    void update();
+    void update(bool saveForRedoUndo = true);
 
 private:
     void drawSimplePolygon(QPainterPath& path, const std::vector<Point>& polygon);
