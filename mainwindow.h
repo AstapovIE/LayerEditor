@@ -26,10 +26,10 @@ private slots:
     void on_actionOpenFile_triggered();
     void on_actionSaveFile_triggered();
 
-    void on_actionredo_triggered();
-    void on_actionundo_triggered();
+    void on_actionRedo_triggered();
+    void on_actionUndo_triggered();
 
-    void onSelectToolClicked();
+    void onPanToolClicked();
     void onDrawToolClicked();
     void onMoveToolClicked();
     void onEraseToolClicked();
@@ -48,7 +48,7 @@ private:
     Ui::MainWindow *ui;
     LayerEditorWidget* layerEditorWidget;
     UndoRedoManager* manager;
-    QString filename; // Переменная для хранения имени текущего файла
+    QString filename;
 
 };
 #endif // MAINWINDOW_H

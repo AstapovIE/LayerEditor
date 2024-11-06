@@ -4,7 +4,7 @@
 #include <QToolBar>
 #include <QPushButton>
 #include <QFileDialog>
-#include "processordialog.h" // Измените на новый заголовок
+#include "processordialog.h"
 #include <QProcess>
 #include <QDebug>
 #include <QFileInfo>
@@ -20,18 +20,18 @@ MainWindow::MainWindow(QWidget *parent)
     ui->editorWidgetLayout->addWidget(layerEditorWidget);
 
     // Добавление кнопок в toolBar
-    QAction *selectAction = new QAction("Select", this);
+    QAction *panAction = new QAction("Pan", this);
     QAction *drawAction = new QAction("Draw", this);
     QAction *moveAction = new QAction("Move", this);
     QAction *eraseAction = new QAction("Erase", this);
 
-    ui->toolBar->addAction(selectAction);
+    ui->toolBar->addAction(panAction);
     ui->toolBar->addAction(drawAction);
     ui->toolBar->addAction(moveAction);
     ui->toolBar->addAction(eraseAction);
 
     // Связь сигналов с обработчиками
-    connect(selectAction, &QAction::triggered, this, &MainWindow::onSelectToolClicked);
+    connect(panAction, &QAction::triggered, this, &MainWindow::onPanToolClicked);
     connect(drawAction, &QAction::triggered, this, &MainWindow::onDrawToolClicked);
     connect(moveAction, &QAction::triggered, this, &MainWindow::onMoveToolClicked);
     connect(eraseAction, &QAction::triggered, this, &MainWindow::onEraseToolClicked);
@@ -40,8 +40,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->autoSaveCheckBox, &QCheckBox::stateChanged, this, &MainWindow::on_autoSaveCheckBox_stateChanged);
 
-    // QPushButton *showLayerPack = new QPushButton(LayerEditorWidget);
-    // showLayerPack->setText("click");
 }
 
 MainWindow::~MainWindow()
@@ -103,23 +101,18 @@ void MainWindow::on_actionSaveFile_triggered()
 }
 
 
-void MainWindow::on_actionredo_triggered()
+void MainWindow::on_actionRedo_triggered()
 {
-    QMessageBox *msg = new QMessageBox;
-    msg->setText("did redo");
-    msg->exec();
-
+    //layerEditorWidget->redo();
 }
 
-void MainWindow::on_actionundo_triggered()
+void MainWindow::on_actionUndo_triggered()
 {
-    QMessageBox *msg = new QMessageBox;
-    msg->setText("did undo");
-    msg->exec();
+    //layerEditorWidget->undo();
 }
 
-void MainWindow::onSelectToolClicked() {
-    handleToolSelection(SELECT);
+void MainWindow::onPanToolClicked() {
+    //handleToolSelection(PAN);
 }
 
 void MainWindow::onDrawToolClicked() {
