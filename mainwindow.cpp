@@ -58,7 +58,6 @@ void MainWindow::on_actionNewFile_triggered()
 void MainWindow::on_actionOpenFile_triggered()
 {
     if (QMessageBox::question(this, "Confirm", "Are you sure you want to open a file?") == QMessageBox::Yes) {
-        //QString filename = QFileDialog::getOpenFileName(this, "Open File");
         filename = QFileDialog::getOpenFileName(this, "Open File");
         qDebug() << "selected file: " << filename;
 
