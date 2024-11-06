@@ -36,6 +36,7 @@ private slots:
 
     void on_processorButton_clicked();
 
+    void on_selectLayer_clicked();
     void on_addNewLayer_clicked();
     void on_copyLayer_clicked();
     void on_deleteLayer_clicked();

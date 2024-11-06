@@ -1,4 +1,4 @@
-#include "Umformer.h"
+#include "Entity.h"
 #include <unordered_map>
 #include <stdexcept>
 
@@ -13,6 +13,11 @@ Point Point::operator+(const Point& other) const {
 Point Point::operator-(const Point& other) const {
     return Point(x - other.x, y - other.y);
 }
+
+bool Point::operator==(const Point& other) const {
+    return x == other.x && y == other.y;
+}
+
 
 std::unordered_map<std::string, double> Point::ravel() const {
     return {{"x", x}, {"y", y}};
@@ -121,6 +126,10 @@ const std::vector<Hole>& Polygon::get_holes() const {
     return holes;
 }
 
+std::vector<Hole> &Polygon::get_holes()
+{
+    return holes;
+}
 
 Layer::Layer(const std::string& name, const std::vector<Polygon>& polygons)
     : name(name), polygons(polygons) {

@@ -19,8 +19,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->editorWidgetLayout->addWidget(layerEditorWidget);
 
-    manager = new UndoRedoManager();
-
     // Добавление кнопок в toolBar
     QAction *selectAction = new QAction("Select", this);
     QAction *drawAction = new QAction("Draw", this);
@@ -38,14 +36,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(moveAction, &QAction::triggered, this, &MainWindow::onMoveToolClicked);
     connect(eraseAction, &QAction::triggered, this, &MainWindow::onEraseToolClicked);
 
-    //connect(ui->autoSaveCheckBox, &QCheckBox::checkStateChanged, this, &MainWindow::on_autoSaveCheckBox_stateChanged);
+    connect(ui->listOfLayers, &QListWidget::itemSelectionChanged, this, &MainWindow::on_selectLayer_clicked);
+
     connect(ui->autoSaveCheckBox, &QCheckBox::stateChanged, this, &MainWindow::on_autoSaveCheckBox_stateChanged);
 
-//    QWidget* ui->LayerEditorWidget;
-//    ui->layout()->addWidget(layerEditorWidget);
-//    ui->LayerEditorWidget->;
-
-//    setCentralWidget(layerEditorWidget);
     // QPushButton *showLayerPack = new QPushButton(LayerEditorWidget);
     // showLayerPack->setText("click");
 }
@@ -71,7 +65,7 @@ void MainWindow::on_actionOpenFile_triggered()
         qDebug() << "selected file: " << filename;
 
         if (!filename.isEmpty()) {
-            //layerEditorWidget->setFilename(filename.toStdString());
+//            layerEditorWidget->setFile(filename.toStdString());
 
             // Получить список строк с названиями слоёв
             // std::vector<std::string> layer_names = layerEditorWidget->getLayersNames();
@@ -99,7 +93,7 @@ void MainWindow::on_actionSaveFile_triggered()
 {
     if (QMessageBox::question(this, "Confirm", "Are you sure you want to save the file?") == QMessageBox::Yes) {
         //сохранение изменений
-        //layerEditorWidget->saveFile(filename);
+        layerEditorWidget->saveAll(filename.toStdString());
         //QString filename = QFileDialog::getSaveFileName(this, "Save File");
         // Логика сохранения файла
 
@@ -112,7 +106,6 @@ void MainWindow::on_actionSaveFile_triggered()
 void MainWindow::on_actionredo_triggered()
 {
     QMessageBox *msg = new QMessageBox;
-    manager->redo();
     msg->setText("did redo");
     msg->exec();
 
@@ -121,11 +114,9 @@ void MainWindow::on_actionredo_triggered()
 void MainWindow::on_actionundo_triggered()
 {
     QMessageBox *msg = new QMessageBox;
-    manager->undo();
     msg->setText("did undo");
     msg->exec();
 }
-
 
 void MainWindow::onSelectToolClicked() {
     handleToolSelection(SELECT);
@@ -214,6 +205,15 @@ void MainWindow::on_processorButton_clicked()
     }
 }
 
+void MainWindow::on_selectLayer_clicked()
+{
+    QListWidgetItem *selectedItem = ui->listOfLayers->currentItem();
+    if (selectedItem) {
+        QString layerName = selectedItem->text();
+        layerEditorWidget->setSelectedLayer(layerName.toStdString());
+    }
+}
+
 void MainWindow::on_addNewLayer_clicked()
 {
     // Создание нового слоя с именем по умолчанию
@@ -224,7 +224,7 @@ void MainWindow::on_addNewLayer_clicked()
     ui->listOfLayers->addItem(newItem);
 
     // Вызов метода добавления слоя
-    //layerEditorWidget->addLayer(newLayerName.toStdString());
+    layerEditorWidget->addLayer(newLayerName.toStdString());
 
     // Показ сообщения
     QMessageBox::information(this, "Layer Added", "New layer '" + newLayerName + "' has been added.");
@@ -246,7 +246,7 @@ void MainWindow::on_copyLayer_clicked()
         ui->listOfLayers->addItem(newItem);
 
         // Вызов метода копирования слоя
-        //layerEditorWidget->copyLayer(layerName.toStdString(), copyLayerName.toStdString());
+        layerEditorWidget->copyLayer(layerName.toStdString(), copyLayerName.toStdString());
 
         // Показ сообщения
         QMessageBox::information(this, "Layer Copied", "Layer '" + copyLayerName + "' has been added.");
@@ -270,7 +270,7 @@ void MainWindow::on_deleteLayer_clicked()
         delete selectedItem;
 
         // Вызов метода удаления слоя
-        //layerEditorWidget->deleteLayer(layerName.toStdString());
+        layerEditorWidget->deleteLayer(layerName.toStdString());
 
         // Показ сообщения
         QMessageBox::information(this, "Layer Deleted", "Layer '" + layerName + "' has been deleted.");
@@ -287,11 +287,11 @@ void MainWindow::on_autoSaveCheckBox_stateChanged(int state)
     if (state == Qt::Checked) {
         // Включение режима авто-сохранения
         qDebug() << "autoSaveMode ON";
-        //layerEditorWidget->autoSaveMode(true);
+        layerEditorWidget->autoSaveMode(true);
     } else {
         // Отключение режима авто-сохранения
         qDebug() << "autoSaveMode OFF";
-        //layerEditorWidget->autoSaveMode(false);
+        layerEditorWidget->autoSaveMode(false);
     }
 }
 
