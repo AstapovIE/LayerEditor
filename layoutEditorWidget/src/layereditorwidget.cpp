@@ -1,5 +1,6 @@
 #include "layereditorwidget.h"
 
+#include <filesystem>
 #include <iostream>
 #include <iomanip>
 #include <ctime>
@@ -41,13 +42,14 @@ namespace {
         if (isForRedoUndo) {
             static int redoUndoFileNumber = 0;
             currentDir += "/database/filebuffer";
-            return std::string(currentDir) + "/layout_" + std::to_string(redoUndoFileNumber++) + ".json";
+            return std::string(currentDir.generic_string()) + "/layout_" + std::to_string(redoUndoFileNumber++) + ".json";
+
         } else {
             auto t = std::time(nullptr);
             auto tm = *std::localtime(&t);
             std::stringstream transTime;
             transTime << std::put_time(&tm, "%d-%m-%Y_%H-%M-%S");
-            return std::string(currentDir) + "/layout_" + transTime.str() + ".json";
+            return std::string(currentDir.generic_string()) + "/layout_" + transTime.str() + ".json";
         }
     }
 
