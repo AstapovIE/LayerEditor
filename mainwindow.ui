@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
+     <enum>QFrame::Shape::NoFrame</enum>
     </property>
     <widget class="QListWidget" name="listOfLayers">
      <property name="geometry">
@@ -120,12 +120,12 @@
      <x>0</x>
      <y>0</y>
      <width>1281</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">
     <property name="title">
-     <string>Menu</string>
+     <string>FIle</string>
     </property>
     <addaction name="actionNewFile"/>
     <addaction name="actionOpenFile"/>
@@ -158,8 +158,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionundo"/>
-   <addaction name="actionredo"/>
+   <addaction name="actionUndo"/>
+   <addaction name="actionRedo"/>
   </widget>
   <action name="actionNewFile">
    <property name="enabled">
@@ -189,14 +189,14 @@
     <string>SomeSettings</string>
    </property>
   </action>
-  <action name="actionundo">
+  <action name="actionUndo">
    <property name="text">
-    <string>undo</string>
+    <string>Undo</string>
    </property>
   </action>
-  <action name="actionredo">
+  <action name="actionRedo">
    <property name="text">
-    <string>redo</string>
+    <string>Redo</string>
    </property>
   </action>
  </widget>

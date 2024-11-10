@@ -26,26 +26,6 @@
     <string/>
    </property>
   </widget>
-  <widget class="QTextEdit" name="num1TextEdit">
-   <property name="geometry">
-    <rect>
-     <x>160</x>
-     <y>50</y>
-     <width>104</width>
-     <height>70</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QTextEdit" name="num2TextEdit">
-   <property name="geometry">
-    <rect>
-     <x>640</x>
-     <y>60</y>
-     <width>104</width>
-     <height>70</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QPushButton" name="confirmButton">
    <property name="geometry">
     <rect>
