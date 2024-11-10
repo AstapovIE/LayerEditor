@@ -111,7 +111,7 @@ void MainWindow::on_actionUndo_triggered()
 }
 
 void MainWindow::onPanToolClicked() {
-    //handleToolSelection(PAN);
+    handleToolSelection(PAN);
 }
 
 void MainWindow::onDrawToolClicked() {

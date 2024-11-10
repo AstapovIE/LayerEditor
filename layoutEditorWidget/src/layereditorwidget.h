@@ -14,13 +14,35 @@
 
 #include "umformer/src/Entity.h"
 #include "umformer/src/umformer.h"
+#include "database/src/UndoRedoManager.h"
 
 
 enum ToolType{
-    SELECT,
+    PAN,
     DRAW,
+    DRAW_STRAIGHT,
     MOVE,
     ERASE
+};
+
+
+class WillLine{
+public:
+    WillLine(QGraphicsScene* s);
+    ~WillLine();
+
+    void addLastPoint(Point p);
+    void updateLastPoint(Point p);
+    void clear();
+    QGraphicsPathItem* getDrawnItem();
+    void setIsDraw(bool f);
+
+private:
+    QGraphicsScene* scene;
+
+    QGraphicsPathItem* drawItem;
+    std::vector<Point> points;
+    bool isDrawFlag = true;
 };
 
 
@@ -35,8 +57,11 @@ public:
     void setCurrentTool(ToolType tool);
     ToolType getCurrentTool() const;
 
+    void redo();
+    void undo();
+
     void setFile(const std::string& filename);
-    void saveAll(std::string filename = "");
+    std::string saveAll(std::string filename = "", bool isForRedoUndo = false);
 
     void addLayer(const std::string& name);
     void copyLayer(const std::string& name, const std::string& copyName);
@@ -46,7 +71,7 @@ public:
 
     std::vector<std::string> getLayerNames() const;
 
-    void update();
+    void update(bool saveForRedoUndo = true);
 
 private:
     void drawSimplePolygon(QPainterPath& path, const std::vector<Point>& polygon);
@@ -66,9 +91,12 @@ private:
     Converter converter;
     LayerPack& layerPack;
 
+    UndoRedoManager undoRedoManager;
+
+    WillLine willLine;
+
     qreal scaleFactor = 1.0;
     bool isDrawingNewPolygon = true;
-    int holeDrawingPolygon = -1;
     int selectedPolygon = -1;
 
     bool isMovingPolygon = false;
@@ -77,9 +105,10 @@ private:
     bool isDeletingPolygon = false;
 
     std::string currentLayerName;
-    ToolType currentToolType;
+    ToolType currentToolType = PAN;
 
     bool isAutoSaveModeEnabled = false;
+    std::string currentFileName;
 
     const std::vector<QColor> layerColors = {
         Qt::green, Qt::blue, Qt::red, Qt::cyan, Qt::magenta, Qt::yellow,
