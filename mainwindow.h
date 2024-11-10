@@ -31,6 +31,7 @@ private slots:
 
     void onPanToolClicked();
     void onDrawToolClicked();
+    void onDrawStraightToolClicked();
     void onMoveToolClicked();
     void onEraseToolClicked();
 

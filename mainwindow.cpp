@@ -22,17 +22,20 @@ MainWindow::MainWindow(QWidget *parent)
     // Добавление кнопок в toolBar
     QAction *panAction = new QAction("Pan", this);
     QAction *drawAction = new QAction("Draw", this);
+    QAction *draw_straightAction = new QAction("Draw Straight", this);
     QAction *moveAction = new QAction("Move", this);
     QAction *eraseAction = new QAction("Erase", this);
 
     ui->toolBar->addAction(panAction);
     ui->toolBar->addAction(drawAction);
+    ui->toolBar->addAction(draw_straightAction);
     ui->toolBar->addAction(moveAction);
     ui->toolBar->addAction(eraseAction);
 
     // Связь сигналов с обработчиками
     connect(panAction, &QAction::triggered, this, &MainWindow::onPanToolClicked);
     connect(drawAction, &QAction::triggered, this, &MainWindow::onDrawToolClicked);
+    connect(draw_straightAction, &QAction::triggered, this, &MainWindow::onDrawStraightToolClicked);
     connect(moveAction, &QAction::triggered, this, &MainWindow::onMoveToolClicked);
     connect(eraseAction, &QAction::triggered, this, &MainWindow::onEraseToolClicked);
 
@@ -116,6 +119,11 @@ void MainWindow::onPanToolClicked() {
 
 void MainWindow::onDrawToolClicked() {
     handleToolSelection(DRAW);
+}
+
+void MainWindow::onDrawStraightToolClicked()
+{
+    handleToolSelection(DRAW_STRAIGHT);
 }
 
 void MainWindow::onMoveToolClicked() {
