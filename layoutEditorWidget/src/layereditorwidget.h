@@ -25,6 +25,26 @@ enum ToolType{
 };
 
 
+class WillLine{
+public:
+    WillLine(QGraphicsScene* s);
+    ~WillLine();
+
+    void addLastPoint(Point p);
+    void updateLastPoint(Point p);
+    void clear();
+    QGraphicsPathItem* getDrawnItem();
+    void setIsDraw(bool f);
+
+private:
+    QGraphicsScene* scene;
+
+    QGraphicsPathItem* drawItem;
+    std::vector<Point> points;
+    bool isDrawFlag = true;
+};
+
+
 class LayerEditorWidget : public QGraphicsView {
 public:
     LayerEditorWidget(QWidget* parent = nullptr);
@@ -72,6 +92,8 @@ private:
 
     UndoRedoManager undoRedoManager;
 
+    WillLine willLine;
+
     qreal scaleFactor = 1.0;
     bool isDrawingNewPolygon = true;
     int holeDrawingPolygon = -1;
@@ -83,7 +105,7 @@ private:
     bool isDeletingPolygon = false;
 
     std::string currentLayerName;
-    ToolType currentToolType;
+    ToolType currentToolType = SELECT;
 
     bool isAutoSaveModeEnabled = false;
     std::string currentFileName;
