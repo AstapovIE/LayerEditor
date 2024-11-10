@@ -183,7 +183,7 @@ void LayerEditorWidget::setSelectedLayer(std::string layerName) {
     willLine.clear();
     selectedPolygon = -1;
     currentLayerName = layerName;
-    setCurrentTool(SELECT);
+    setCurrentTool(PAN);
     update(false);
 }
 
@@ -193,7 +193,7 @@ std::string LayerEditorWidget::getSelectedLayer() const {
 
 void LayerEditorWidget::setCurrentTool(ToolType tool) {
     switch (tool) {
-        case SELECT:
+        case PAN:
             setDragMode(QGraphicsView::ScrollHandDrag);
             willLine.setIsDraw(false);
             break;
@@ -325,13 +325,13 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
     };
 
     switch (currentToolType){
-        case SELECT:
-            if (event->button() == Qt::LeftButton) {
-                selectedPolygon = insidePolygonIdx(mousePos);
-                if (selectedPolygon != -1) {
-                    update(false);
-                }
-            }
+        case PAN:
+//            if (event->button() == Qt::LeftButton) {
+//                selectedPolygon = insidePolygonIdx(mousePos);
+//                if (selectedPolygon != -1) {
+//                    update(false);
+//                }
+//            }
             break;
         case DRAW:
             addPoint(mousePos);
@@ -386,7 +386,7 @@ void LayerEditorWidget::mouseMoveEvent(QMouseEvent* event) {
                     willLine.updateLastPoint(getStraightPoint(lastPolygon.back(), mousePos));
             }
             break;
-        case SELECT:
+        case PAN:
         case ERASE:
             break;
     }
@@ -409,7 +409,7 @@ void LayerEditorWidget::mouseReleaseEvent(QMouseEvent* event) {
                 update();
             }
             break;
-        case SELECT:
+        case PAN:
         case DRAW:
         case DRAW_STRAIGHT:
             break;

@@ -18,7 +18,7 @@
 
 
 enum ToolType{
-    SELECT,
+    PAN,
     DRAW,
     DRAW_STRAIGHT,
     MOVE,
@@ -85,19 +85,6 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
 
-//    void keyPressEvent(QKeyEvent* event) override {
-//        switch (event->key()) {
-//            case Qt::Key_1:
-//                setCurrentTool(DRAW);
-//                break;
-//            case Qt::Key_2:
-//                setCurrentTool(DRAW_STRAIGHT);
-//                break;
-//            default:
-//                QGraphicsView::keyPressEvent(event);
-//        }
-//    }
-
 private:
     QGraphicsScene* scene;
 
@@ -118,7 +105,7 @@ private:
     bool isDeletingPolygon = false;
 
     std::string currentLayerName;
-    ToolType currentToolType = SELECT;
+    ToolType currentToolType = PAN;
 
     bool isAutoSaveModeEnabled = false;
     std::string currentFileName;
