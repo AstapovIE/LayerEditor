@@ -96,7 +96,6 @@ private:
 
     qreal scaleFactor = 1.0;
     bool isDrawingNewPolygon = true;
-    int holeDrawingPolygon = -1;
     int selectedPolygon = -1;
 
     bool isMovingPolygon = false;

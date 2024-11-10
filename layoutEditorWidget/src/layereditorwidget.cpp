@@ -177,7 +177,6 @@ void LayerEditorWidget::setCurrentTool(ToolType tool) {
 
     willLine.clear();
     isDrawingNewPolygon = true;
-    holeDrawingPolygon = -1;
     currentToolType = tool;
 }
 
@@ -284,23 +283,10 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
                         layerPack[currentLayerName][polygonsCount-1].append(mousePos);
                         willLine.addLastPoint(mousePos);
                     }
-				} else if (holeDrawingPolygon != -1) {
-                    if (!isInsidePolygon(layerPack[currentLayerName][holeDrawingPolygon], mousePos)) {
-                        std::cout << "Error: can`t place point here: hole`s vertices should be inside polygon" << std::endl;
-                    } else if (isPolygonHaveIntesections(layerPack[currentLayerName][holeDrawingPolygon].get_holes().back().get_vertices(), mousePos)) {
-                        std::cout << "Error: can`t place point here: resulting polygon will have self-intersections" << std::endl;
-                    } else {
-                        layerPack[currentLayerName][holeDrawingPolygon].get_holes().back().append(mousePos);
-                        willLine.addLastPoint(mousePos);
-                    }
                 } else {
-                    holeDrawingPolygon = insidePolygonIdx(mousePos);
-                    if (holeDrawingPolygon == -1) {
-                        layerPack[currentLayerName].append(Polygon({mousePos}));
-                        isDrawingNewPolygon = false;
-                    } else {
-                        layerPack[currentLayerName][holeDrawingPolygon].add_hole(Hole({mousePos}));
-                    }
+                    layerPack[currentLayerName].append(Polygon({mousePos}));
+                    isDrawingNewPolygon = false;
+
                     willLine.addLastPoint(mousePos);
                 }
 
@@ -308,7 +294,6 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
             } else if (event->button() == Qt::RightButton) {
                 willLine.clear();
                 isDrawingNewPolygon = true;
-                holeDrawingPolygon = -1;
             }
             break;
         }
@@ -456,5 +441,3 @@ void LayerEditorWidget::undo() {
     converter.loadJson(filename.toStdString());
     update(false);
 }
-
-
