@@ -20,6 +20,7 @@
 enum ToolType{
     SELECT,
     DRAW,
+    DRAW_STRAIGHT,
     MOVE,
     ERASE
 };
@@ -83,6 +84,19 @@ protected:
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
+
+//    void keyPressEvent(QKeyEvent* event) override {
+//        switch (event->key()) {
+//            case Qt::Key_1:
+//                setCurrentTool(DRAW);
+//                break;
+//            case Qt::Key_2:
+//                setCurrentTool(DRAW_STRAIGHT);
+//                break;
+//            default:
+//                QGraphicsView::keyPressEvent(event);
+//        }
+//    }
 
 private:
     QGraphicsScene* scene;

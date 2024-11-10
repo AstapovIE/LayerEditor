@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <ctime>
+#include <math.h>
 
 
 namespace {
@@ -76,6 +77,38 @@ namespace {
             }
         }
         return false;
+    }
+
+    Point getStraightPoint(Point center, Point p) {
+        static auto calculateDistance = [](Point a, Point b, Point c) {
+            return std::abs((b.y-a.y)*c.x + (a.x-b.x)*c.y + b.x*a.y - b.y*a.x)
+                 / std::sqrt((b.y-a.y)*(b.y-a.y) + (b.x-a.x)*(b.x-a.x));
+        };
+
+        static auto calculateProjection = [](Point a, Point b) {
+            return a.x * b.x + a.y * b.y;
+        };
+
+        static const std::vector<Point> lineVectors = {
+            Point(1, 0),
+            Point(0, 1),
+            Point(std::sqrt(2) / 2, std::sqrt(2) / 2),
+            Point(std::sqrt(2) / 2, -std::sqrt(2) / 2),
+        };
+
+        double minDist = 1e9;
+        Point closestLine = lineVectors[0];
+        for (const auto& lineVector : lineVectors) {
+            double dist = calculateDistance(center, center + lineVector, p);
+            if (dist < minDist) {
+                closestLine = lineVector;
+                minDist = dist;
+            }
+        }
+
+        Point vec = p - center;
+        double projection = calculateProjection(closestLine, vec);
+        return center + Point(closestLine.x * projection, closestLine.y * projection);
     }
 }
 
@@ -165,6 +198,7 @@ void LayerEditorWidget::setCurrentTool(ToolType tool) {
             willLine.setIsDraw(false);
             break;
         case DRAW:
+        case DRAW_STRAIGHT:
             setDragMode(QGraphicsView::NoDrag);
             willLine.setIsDraw(true);
             break;
@@ -175,8 +209,10 @@ void LayerEditorWidget::setCurrentTool(ToolType tool) {
             break;
     }
 
-    willLine.clear();
-    isDrawingNewPolygon = true;
+    if ( !((tool == DRAW || tool == DRAW_STRAIGHT) && (currentToolType == DRAW || currentToolType == DRAW_STRAIGHT)) ) {
+        willLine.clear();
+        isDrawingNewPolygon = true;
+    }
     currentToolType = tool;
 }
 
@@ -263,8 +299,33 @@ int LayerEditorWidget::insidePolygonIdx(Point point) {
 void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
     QPointF mousePosQ = mapToScene(event->pos());
     Point mousePos(mousePosQ.x(), mousePosQ.y());
+
+    auto addPoint = [&event, this](Point mousePos) {
+        auto& curLayer = this->layerPack[this->currentLayerName];
+        if (event->button() == Qt::LeftButton) {
+            int polygonsCount = curLayer.get_polygons().size();
+            if (!(this->isDrawingNewPolygon)) {
+                if (isPolygonHaveIntesections(curLayer[polygonsCount-1].get_vertices(), mousePos)) {
+                    std::cout << "Error: can`t place point here: resulting polygon will have self-intersections" << std::endl;
+                } else {
+                    curLayer[polygonsCount-1].append(mousePos);
+                    willLine.addLastPoint(mousePos);
+                }
+            } else {
+                curLayer.append(Polygon({mousePos}));
+                this->isDrawingNewPolygon = false;
+
+                this->willLine.addLastPoint(mousePos);
+            }
+            this->update();
+        } else if (event->button() == Qt::RightButton) {
+            this->willLine.clear();
+            this->isDrawingNewPolygon = true;
+        }
+    };
+
     switch (currentToolType){
-        case SELECT: {
+        case SELECT:
             if (event->button() == Qt::LeftButton) {
                 selectedPolygon = insidePolygonIdx(mousePos);
                 if (selectedPolygon != -1) {
@@ -272,32 +333,17 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
                 }
             }
             break;
-        }
-        case DRAW: {
-            if (event->button() == Qt::LeftButton) {
-                int polygonsCount = layerPack[currentLayerName].get_polygons().size();
-                if (!isDrawingNewPolygon) {
-                    if (isPolygonHaveIntesections(layerPack[currentLayerName][polygonsCount-1].get_vertices(), mousePos)) {
-                        std::cout << "Error: can`t place point here: resulting polygon will have self-intersections" << std::endl;
-                    } else {
-                        layerPack[currentLayerName][polygonsCount-1].append(mousePos);
-                        willLine.addLastPoint(mousePos);
-                    }
-                } else {
-                    layerPack[currentLayerName].append(Polygon({mousePos}));
-                    isDrawingNewPolygon = false;
-
-                    willLine.addLastPoint(mousePos);
-                }
-
-                update();
-            } else if (event->button() == Qt::RightButton) {
-                willLine.clear();
-                isDrawingNewPolygon = true;
+        case DRAW:
+            addPoint(mousePos);
+            break;
+        case DRAW_STRAIGHT:
+            if (event->button() == Qt::LeftButton && !isDrawingNewPolygon) {
+                addPoint(getStraightPoint(layerPack[currentLayerName].get_polygons().back().get_vertices().back(), mousePos));
+            } else {
+                addPoint(mousePos);
             }
             break;
-        }
-        case MOVE: {
+        case MOVE:
             if (event->button() == Qt::LeftButton) {
                 selectedPolygon = insidePolygonIdx(mousePos);
                 if (selectedPolygon != -1) {
@@ -306,8 +352,7 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
                 }
             }
             break;
-        }
-        case ERASE: {
+        case ERASE:
             if (event->button() == Qt::LeftButton) {
                 selectedPolygon = insidePolygonIdx(mousePos);
                 if (selectedPolygon != -1) {
@@ -316,7 +361,6 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
                 }
             }
             break;
-        }
     }
     QGraphicsView::mousePressEvent(event);
     lastMousePos = mousePos;
@@ -334,6 +378,13 @@ void LayerEditorWidget::mouseMoveEvent(QMouseEvent* event) {
             break;
         case DRAW:
             willLine.updateLastPoint(mousePos);
+            break;
+        case DRAW_STRAIGHT:
+            if (!isDrawingNewPolygon && !currentLayerName.empty() && !layerPack[currentLayerName].get_polygons().empty()) {
+                const auto& lastPolygon = layerPack[currentLayerName].get_polygons().back().get_vertices();
+                if (!lastPolygon.empty())
+                    willLine.updateLastPoint(getStraightPoint(lastPolygon.back(), mousePos));
+            }
             break;
         case SELECT:
         case ERASE:
@@ -360,6 +411,7 @@ void LayerEditorWidget::mouseReleaseEvent(QMouseEvent* event) {
             break;
         case SELECT:
         case DRAW:
+        case DRAW_STRAIGHT:
             break;
     }
     QGraphicsView::mouseReleaseEvent(event);
