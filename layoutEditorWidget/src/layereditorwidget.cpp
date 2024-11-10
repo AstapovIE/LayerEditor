@@ -326,12 +326,6 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
 
     switch (currentToolType){
         case PAN:
-//            if (event->button() == Qt::LeftButton) {
-//                selectedPolygon = insidePolygonIdx(mousePos);
-//                if (selectedPolygon != -1) {
-//                    update(false);
-//                }
-//            }
             break;
         case DRAW:
             addPoint(mousePos);
