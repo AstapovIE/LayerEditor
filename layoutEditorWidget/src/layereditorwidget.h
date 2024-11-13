@@ -100,7 +100,8 @@ private:
     int selectedPolygon = -1;
 
     bool isMovingPolygon = false;
-    Point lastMousePos;
+    bool haveMovedPolygon = false;
+    Point lastMousePos = Point(0,0);
 
     bool isDeletingPolygon = false;
 

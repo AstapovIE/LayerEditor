@@ -5,50 +5,67 @@
 #include <vector>
 #include <string>
 #include <stdexcept>
+#include <algorithm>
+#include <cmath>
+#include <sstream>
+#include <iomanip>
+
+
+const double EPSILON = 1e-11;     // Глобальная константа для точности сравнения
+const int OUTPUT_PRECISION = 15;  // Константа для точности вывода
+
 
 class Point {
+private:
+    std::string format_double(double num) const;
+
 public:
     double x; // Координата точки по оси X
     double y; // Координата точки по оси Y
 
-    Point(double x = 0.0, double y = 0.0);
+    Point(double x, double y);
 
     Point operator+(const Point& other) const;
     Point operator-(const Point& other) const;
+    Point operator*(double num) const;
+    Point operator/(double num) const;
+    Point& operator*=(double num);
+    Point& operator/=(double num);
     bool operator==(const Point& other) const;
+    bool operator!=(const Point& other) const;
+    operator std::string() const;
 
     std::unordered_map<std::string, double> ravel() const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Point& point);
 };
+
 
 class AbstractPolygon {
 protected:
-    std::vector<Point> vertices;
+    std::vector<Point> points;
 
 public:
     AbstractPolygon() = default;
 
     virtual ~AbstractPolygon() = default;
-    virtual void append(const Point& point) = 0;
-    virtual void insert(const Point& point, size_t index) = 0;
-    virtual void remove(size_t index) = 0;
-    virtual const std::vector<Point>& get_vertices() const = 0;
+    void append(const Point& point);
+    void insert(const Point& point, size_t index);
+    void remove(size_t index);
+    const std::vector<Point>& get_points() const;
 
-    virtual Point& operator[](size_t index) = 0;
-    virtual const Point& operator[](size_t index) const = 0;
+    Point& operator[](size_t index);
+    const Point& operator[](size_t index) const;
+
+    operator std::string() const;
+
+    friend std::ostream& operator<<(std::ostream& os, const AbstractPolygon& abstract_polygon);
 };
 
 
 class Hole : public AbstractPolygon {
 public:
-    Hole(const std::vector<Point>& vertices = {});
-
-    void append(const Point& point) override;
-    void insert(const Point& point, size_t index) override;
-    void remove(size_t index) override;
-    const std::vector<Point>& get_vertices() const override;
-
-    Point& operator[](size_t index) override;
-    const Point& operator[](size_t index) const override;
+    Hole(const std::vector<Point>& points = {});
 };
 
 
@@ -57,20 +74,14 @@ private:
     std::vector<Hole> holes;
 
 public:
-    Polygon(const std::vector<Point>& vertices = {}, const std::vector<Hole>& holes = {}); // Default arguments
-
-    void append(const Point& point) override;
-    void insert(const Point& point, size_t index) override;
-    void remove(size_t index) override;
-    const std::vector<Point>& get_vertices() const override;
-
-    Point& operator[](size_t index) override;
-    const Point& operator[](size_t index) const override;
+    Polygon(const std::vector<Point>& points = {}, const std::vector<Hole>& holes = {});
 
     void add_hole(const Hole& hole);
     void remove_hole(size_t index);
     const std::vector<Hole>& get_holes() const;
     std::vector<Hole>& get_holes();
+
+    operator std::string() const;
 };
 
 
@@ -80,9 +91,7 @@ private:
     std::vector<Polygon> polygons;
 
 public:
-    Layer() : name("Unnamed Layer"), polygons() {}  // Конструктор по умолчанию
-    Layer(const char* name) : name(name), polygons() {} // Конструктор с const char*
-    Layer(const std::string& name, const std::vector<Polygon>& polygons);
+    Layer(const std::string& name = "Unnamed Layer", const std::vector<Polygon>& polygons = {});
     Layer(const Layer& other) = default;          // Конструктор копирования
     Layer(Layer&& other) noexcept = default;       // Перемещающий конструктор
     Layer& operator=(const Layer& other) = default; // Оператор копирования
@@ -91,7 +100,6 @@ public:
     const std::string& get_name() const;
     void rename(const std::string& new_name);
     void append(const Polygon& polygon);
-    void insert(const Polygon& polygon, size_t index);
     void remove(size_t index);
     const std::vector<Polygon>& get_polygons() const;
 
@@ -103,27 +111,20 @@ public:
 
 class LayerPack {
 private:
-    std::unordered_map<std::string, Layer> layers_by_name;   // Хранит слои по имени
-    std::vector<Layer> layers_by_index;                      // Хранит слои по индексу
+    std::vector<Layer> layers;
 
+    // Вспомогательная функция для поиска индекса слоя по имени
+    size_t find_layer_index(const std::string& name) const;
 public:
-    // Конструктор
     LayerPack(const std::vector<Layer>& layers = {});
 
-    // Методы управления слоями
     void append_layer(const Layer& layer);
-    void insert_layer(const Layer& layer, size_t index);
     void remove_layer(const std::string& name);
-    void remove_layer(size_t index);
-
-    // Методы доступа к слоям
     const std::vector<Layer>& get_layers() const;
+    std::vector<Layer>& get_layers();
     std::vector<std::string> get_layers_names() const;
-    const std::unordered_map<std::string, Layer>& get_layers_map() const;
+    size_t size() const;
 
-    // Перегрузка операторов
-    Layer& operator[](size_t index);
-    const Layer& operator[](size_t index) const;
     Layer& operator[](const std::string& name);
     const Layer& operator[](const std::string& name) const;
 };

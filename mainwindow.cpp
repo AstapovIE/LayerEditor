@@ -63,11 +63,10 @@ void MainWindow::on_actionOpenFile_triggered()
         qDebug() << "selected file: " << filename;
 
         if (!filename.isEmpty()) {
-//            layerEditorWidget->setFile(filename.toStdString());
+            layerEditorWidget->setFile(filename.toStdString());
 
             // Получить список строк с названиями слоёв
-            // std::vector<std::string> layer_names = layerEditorWidget->getLayersNames();
-            std::vector<std::string> layer_names = {"layer1", "layer2", "layer3", "layer4"};
+            std::vector<std::string> layer_names = layerEditorWidget->getLayerNames();
 
             // Очистить QListWidget перед добавлением новых элементов
             ui->listOfLayers->clear();
@@ -101,14 +100,12 @@ void MainWindow::on_actionSaveFile_triggered()
 }
 
 
-void MainWindow::on_actionRedo_triggered()
-{
-    //layerEditorWidget->redo();
+void MainWindow::on_actionRedo_triggered() {
+    layerEditorWidget->redo();
 }
 
-void MainWindow::on_actionUndo_triggered()
-{
-    //layerEditorWidget->undo();
+void MainWindow::on_actionUndo_triggered() {
+    layerEditorWidget->undo();
 }
 
 void MainWindow::onPanToolClicked() {
@@ -314,6 +311,7 @@ void MainWindow::on_autoSaveCheckBox_stateChanged(int state)
 //         QMessageBox::information(this, "Result", output);
 //     }
 // }
+
 
 
 

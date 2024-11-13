@@ -17,19 +17,19 @@ namespace {
     
     bool isInsidePolygon(const Polygon& polygon, Point point) {
         for (const auto& hole : polygon.get_holes()) {
-            if (isInsideSimplePolygon(hole.get_vertices(), point)) {
+            if (isInsideSimplePolygon(hole.get_points(), point)) {
                 return false;
             }
         }
-        return isInsideSimplePolygon(polygon.get_vertices(), point);
+        return isInsideSimplePolygon(polygon.get_points(), point);
     }
     
     void movePolygon(Polygon& polygon, Point delta) {
-        for (int i=0; i < polygon.get_vertices().size(); ++i) {
+        for (int i=0; i < polygon.get_points().size(); ++i) {
             polygon[i] = polygon[i] + delta;
         }
         for (auto& hole : polygon.get_holes()) {
-            for (int i=0; i < hole.get_vertices().size(); ++i) {
+            for (int i=0; i < hole.get_points().size(); ++i) {
                 hole[i] = hole[i] + delta;
             }
         }
@@ -224,9 +224,9 @@ void LayerEditorWidget::update(bool saveForRedoUndo) {
     scene->removeItem(willLine.getDrawnItem());
     scene->clear();
 
-    for (const auto& [layerName, Layer] : layerPack.get_layers_map()) {
-        if (layerName != currentLayerName) {
-            drawLayer(layerName, 50);
+    for (const auto& layer : layerPack.get_layers()) {
+        if (layer.get_name() != currentLayerName) {
+            drawLayer(layer.get_name(), 50);
         }
     }
     if (!currentLayerName.empty()) {
@@ -246,20 +246,19 @@ void LayerEditorWidget::update(bool saveForRedoUndo) {
 void LayerEditorWidget::drawLayer(const std::string& layerName, int alpha) {
     for (int i=0; i<layerPack[layerName].get_polygons().size(); ++i) {
         QPainterPath path;
-        drawSimplePolygon(path, layerPack[layerName][i].get_vertices());
+        drawSimplePolygon(path, layerPack[layerName][i].get_points());
         for (const auto& hole : layerPack[layerName][i].get_holes()) {
-            drawSimplePolygon(path, hole.get_vertices());
+            drawSimplePolygon(path, hole.get_points());
         }
         path.setFillRule(Qt::OddEvenFill);
 
         QGraphicsPathItem *pathItem = new QGraphicsPathItem(path);
 
         int layerIdx = 0;
-        for (int j=0; j<layerPack.get_layers().size(); ++j) {
-            if (layerPack[j].get_name() == layerName) {
-                layerIdx = j;
+        for (const auto& layer : layerPack.get_layers()) {
+            if (layer.get_name() == layerName)
                 break;
-            }
+            layerIdx++;
         }
         QColor color = layerColors[layerIdx % layerColors.size()];
         color.setAlpha(alpha);
@@ -305,14 +304,16 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
         if (event->button() == Qt::LeftButton) {
             int polygonsCount = curLayer.get_polygons().size();
             if (!(this->isDrawingNewPolygon)) {
-                if (isPolygonHaveIntesections(curLayer[polygonsCount-1].get_vertices(), mousePos)) {
+                if (isPolygonHaveIntesections(curLayer[polygonsCount-1].get_points(), mousePos)) {
                     std::cout << "Error: can`t place point here: resulting polygon will have self-intersections" << std::endl;
                 } else {
                     curLayer[polygonsCount-1].append(mousePos);
                     willLine.addLastPoint(mousePos);
                 }
             } else {
-                curLayer.append(Polygon({mousePos}));
+                Polygon poly;
+                poly.append(mousePos);
+                curLayer.append(poly);
                 this->isDrawingNewPolygon = false;
 
                 this->willLine.addLastPoint(mousePos);
@@ -332,7 +333,7 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
             break;
         case DRAW_STRAIGHT:
             if (event->button() == Qt::LeftButton && !isDrawingNewPolygon) {
-                addPoint(getStraightPoint(layerPack[currentLayerName].get_polygons().back().get_vertices().back(), mousePos));
+                addPoint(getStraightPoint(layerPack[currentLayerName].get_polygons().back().get_points().back(), mousePos));
             } else {
                 addPoint(mousePos);
             }
@@ -367,7 +368,8 @@ void LayerEditorWidget::mouseMoveEvent(QMouseEvent* event) {
         case MOVE:
             if (isMovingPolygon && selectedPolygon != -1) {
                 movePolygon(layerPack[currentLayerName][selectedPolygon], mousePos - lastMousePos);
-                update();
+                update(false);
+                haveMovedPolygon = true;
             }
             break;
         case DRAW:
@@ -375,7 +377,7 @@ void LayerEditorWidget::mouseMoveEvent(QMouseEvent* event) {
             break;
         case DRAW_STRAIGHT:
             if (!isDrawingNewPolygon && !currentLayerName.empty() && !layerPack[currentLayerName].get_polygons().empty()) {
-                const auto& lastPolygon = layerPack[currentLayerName].get_polygons().back().get_vertices();
+                const auto& lastPolygon = layerPack[currentLayerName].get_polygons().back().get_points();
                 if (!lastPolygon.empty())
                     willLine.updateLastPoint(getStraightPoint(lastPolygon.back(), mousePos));
             }
@@ -394,6 +396,10 @@ void LayerEditorWidget::mouseReleaseEvent(QMouseEvent* event) {
     switch (currentToolType) {
         case MOVE:
             isMovingPolygon = false;
+            if (haveMovedPolygon) {
+                update();
+                haveMovedPolygon = false;
+            }
             break;
         case ERASE:
             if (isDeletingPolygon && selectedPolygon != -1) {
