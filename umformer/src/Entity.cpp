@@ -80,6 +80,10 @@ std::ostream& operator<<(std::ostream& os, const Point& point) {
 
 
 // AbstractPolygon
+AbstractPolygon::AbstractPolygon(const std::vector<Point>& points)
+    : points(points) {}
+
+
 void AbstractPolygon::append(const Point& point) {
     points.push_back(point);
 }
@@ -140,12 +144,12 @@ std::ostream& operator<<(std::ostream& os, const AbstractPolygon& abstract_polyg
 
 // Hole
 Hole::Hole(const std::vector<Point>& points)
-    : AbstractPolygon() {}
+    : AbstractPolygon(points) {}
 
 
 // Polygon
 Polygon::Polygon(const std::vector<Point>& points, const std::vector<Hole>& holes)
-    : AbstractPolygon(), holes(holes) {}
+    : AbstractPolygon(points), holes(holes) {}
 
 void Polygon::add_hole(const Hole& hole) {
     holes.push_back(hole);

@@ -43,11 +43,10 @@ public:
 
 class AbstractPolygon {
 protected:
+    AbstractPolygon(const std::vector<Point>& points = {});
     std::vector<Point> points;
 
 public:
-    AbstractPolygon() = default;
-
     virtual ~AbstractPolygon() = default;
     void append(const Point& point);
     void insert(const Point& point, size_t index);

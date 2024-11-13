@@ -313,9 +313,7 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
                     willLine.addLastPoint(mousePos);
                 }
             } else {
-                Polygon poly;
-                poly.append(mousePos);
-                curLayer.append(poly);
+                curLayer.append(Polygon({mousePos}));
                 this->isDrawingNewPolygon = false;
 
                 this->willLine.addLastPoint(mousePos);
