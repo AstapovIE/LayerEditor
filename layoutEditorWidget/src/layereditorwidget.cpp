@@ -239,10 +239,10 @@ void LayerEditorWidget::update(bool saveForRedoUndo) {
     if (isAutoSaveModeEnabled) {
         saveAll();
     }
-//    if (saveForRedoUndo) {
-//        auto filename = saveAll("", true);
-//        undoRedoManager.doChanges(QString(filename.c_str()));
-//    }
+    if (saveForRedoUndo) {
+        auto filename = saveAll("", true);
+        undoRedoManager.doChanges(QString(filename.c_str()));
+    }
 }
 
 void LayerEditorWidget::drawLayer(const std::string& layerName, int alpha) {
