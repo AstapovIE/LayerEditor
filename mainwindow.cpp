@@ -8,6 +8,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QFileInfo>
+#include <QInputDialog>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -213,18 +214,44 @@ void MainWindow::on_selectLayer_clicked()
 
 void MainWindow::on_addNewLayer_clicked()
 {
-    // Создание нового слоя с именем по умолчанию
-    static int layerCounter = 1;
-    QString newLayerName = "NewLayer" + QString::number(layerCounter++);
+    QString newLayerName;
+    bool ok = false;
+
+    while (!ok) {
+        newLayerName = QInputDialog::getText(this, "Добавить новый слой",
+                                             "Введите название слоя:", QLineEdit::Normal, "", &ok);
+        if (!ok || newLayerName.isEmpty()) {
+            QMessageBox::warning(this, "Неверное имя", "Имя слоя не может быть пустым.");
+            return;
+        }
+
+        // Проверка на уникальность имени слоя
+        bool nameExists = false;
+        for (int i = 0; i < ui->listOfLayers->count(); ++i) {
+            if (ui->listOfLayers->item(i)->text() == newLayerName) {
+                nameExists = true;
+                break;
+            }
+        }
+
+        if (!nameExists) {
+            break;
+        } else {
+            QMessageBox::warning(this, "Имя занято", "Слой с таким именем уже существует. Пожалуйста, выберите другое имя.");
+            ok = false;
+        }
+    }
+
+    // Создание нового элемента и добавление его в список
     QListWidgetItem *newItem = new QListWidgetItem(newLayerName);
     newItem->setTextAlignment(Qt::AlignCenter);
     ui->listOfLayers->addItem(newItem);
 
-    // Вызов метода добавления слоя
+    // Вызов метода добавления слоя в layerEditorWidget
     layerEditorWidget->addLayer(newLayerName.toStdString());
 
-    // Показ сообщения
-    QMessageBox::information(this, "Layer Added", "New layer '" + newLayerName + "' has been added.");
+    // Показ сообщения об успешном добавлении слоя
+    QMessageBox::information(this, "Слой добавлен", "Новый слой '" + newLayerName + "' успешно добавлен.");
 }
 
 void MainWindow::on_copyLayer_clicked()
@@ -233,25 +260,50 @@ void MainWindow::on_copyLayer_clicked()
 
     if (selectedItem)
     {
-        QString layerName = selectedItem->text();
+        QString originalLayerName = selectedItem->text();
+        QString copyLayerName;
+        bool ok;
 
-        // Создание нового слоя с именем по умолчанию
-        static int layerCounter = 1;
-        QString copyLayerName = "CopyLayer" + QString::number(layerCounter++);
+        while (true) {
+            copyLayerName = QInputDialog::getText(this, "Копировать слой",
+                                                  "Введите название для копии слоя:", QLineEdit::Normal, "", &ok);
+
+            if (!ok || copyLayerName.isEmpty()) {
+                QMessageBox::warning(this, "Неверное имя", "Имя слоя не может быть пустым.");
+                return;
+            }
+
+            // Проверка на уникальность имени слоя
+            bool nameExists = false;
+            for (int i = 0; i < ui->listOfLayers->count(); ++i) {
+                if (ui->listOfLayers->item(i)->text() == copyLayerName) {
+                    nameExists = true;
+                    break;
+                }
+            }
+
+            if (!nameExists) {
+                break;
+            } else {
+                QMessageBox::warning(this, "Имя занято", "Слой с таким именем уже существует. Пожалуйста, выберите другое имя.");
+            }
+        }
+
+        // Создание нового элемента и добавление его в список
         QListWidgetItem *newItem = new QListWidgetItem(copyLayerName);
         newItem->setTextAlignment(Qt::AlignCenter);
         ui->listOfLayers->addItem(newItem);
 
-        // Вызов метода копирования слоя
-        layerEditorWidget->copyLayer(layerName.toStdString(), copyLayerName.toStdString());
+        // Вызов метода копирования слоя в layerEditorWidget
+        layerEditorWidget->copyLayer(originalLayerName.toStdString(), copyLayerName.toStdString());
 
-        // Показ сообщения
-        QMessageBox::information(this, "Layer Copied", "Layer '" + copyLayerName + "' has been added.");
+        // Показ сообщения об успешном копировании слоя
+        QMessageBox::information(this, "Слой скопирован", "Копия слоя '" + copyLayerName + "' успешно добавлена.");
     }
     else
     {
         // Показ сообщения, если не выбран слой
-        QMessageBox::warning(this, "Copy Layer", "Select a layer to copy.");
+        QMessageBox::warning(this, "Копировать слой", "Выберите слой для копирования.");
     }
 }
 
@@ -270,12 +322,12 @@ void MainWindow::on_deleteLayer_clicked()
         layerEditorWidget->deleteLayer(layerName.toStdString());
 
         // Показ сообщения
-        QMessageBox::information(this, "Layer Deleted", "Layer '" + layerName + "' has been deleted.");
+        QMessageBox::information(this, "Удаление слоя", "Слой '" + layerName + "' удален.");
     }
     else
     {
         // Показ сообщения, если не выбран слой
-        QMessageBox::warning(this, "Delete Layer", "Select a layer to delete.");
+        QMessageBox::warning(this, "Удаление слоя", "Сначала выберите слой для удаления.");
     }
 }
 
