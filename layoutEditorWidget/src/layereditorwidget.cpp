@@ -519,12 +519,7 @@ void LayerEditorWidget::setFile(const std::string& filename) {
     update();
 }
 
-std::string LayerEditorWidget::saveAll(std::string filename, bool isForRedoUndo) {
-    if (!isForRedoUndo && filename.empty())
-        for (const auto point : layerPack[currentLayerName][0].get_points()) {
-            std::cout << std::setprecision(6) << point.x << ' ' << point.y << std::endl;
-        }
-
+std::string LayerEditorWidget::saveAll(std::string filename, bool isForRedoUndo) {    
     if (isForRedoUndo) {
         filename = generateFileName(true);
     } else if (filename.empty() && !currentFileName.empty()) {
