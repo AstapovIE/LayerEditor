@@ -182,10 +182,11 @@ LayerEditorWidget::LayerEditorWidget(QWidget* parent)
 }
 
 void LayerEditorWidget::setSelectedLayer(std::string layerName) {
-    willLine.clear();
+    if (layerName == currentLayerName) return;
+
+    setCurrentTool(PAN);
     selectedPolygon = -1;
     currentLayerName = layerName;
-    setCurrentTool(PAN);
     update(false);
 }
 
@@ -212,8 +213,7 @@ void LayerEditorWidget::setCurrentTool(ToolType tool) {
     }
 
     if ( !((tool == DRAW || tool == DRAW_STRAIGHT) && (currentToolType == DRAW || currentToolType == DRAW_STRAIGHT)) ) {
-        willLine.clear();
-        isDrawingNewPolygon = true;
+        endDrawing();
     }
     currentToolType = tool;
 }
@@ -297,6 +297,56 @@ int LayerEditorWidget::insidePolygonIdx(Point point) {
     return polygonIdx;
 }
 
+void LayerEditorWidget::endDrawing() {
+    simplifyLastPolygon();
+    willLine.clear();
+    isDrawingNewPolygon = true;
+}
+
+void LayerEditorWidget::simplifyLastPolygon() {
+    if (currentLayerName.empty() || layerPack[currentLayerName].get_polygons().empty()) return;
+
+    auto& layer = layerPack[currentLayerName];
+    int polygonsCount = layer.get_polygons().size();
+    auto& polygon = layer[polygonsCount - 1];
+    int pointsCount = polygon.get_points().size();
+
+    if (polygon.get_points().size() <= 2) {
+        layer.remove(polygonsCount - 1);
+        update();
+        return;
+    }
+
+    auto points = polygon.get_points();
+    points.insert(points.begin(), points.back());
+    points.push_back(points[1]);
+    std::vector<int> pointsToRemove;
+
+    auto isPointsOnOneLine = [](Point a, Point b, Point c) {
+        return std::abs(a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y)) < 1e-6;
+    };
+
+    for (int i=1; i<=pointsCount; i++) {
+        if (isPointsOnOneLine(points[i-1], points[i], points[i+1])) {
+            pointsToRemove.push_back(i-1);
+        }
+    }
+
+    if (pointsToRemove.empty()) return;
+
+    if (pointsCount - pointsToRemove.size() <= 2) {
+        layer.remove(polygonsCount - 1);
+        update();
+        return;
+    }
+
+    std::reverse(pointsToRemove.begin(), pointsToRemove.end());
+    for (int i : pointsToRemove) {
+        polygon.remove(i);
+    }
+    update();
+}
+
 void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
     QPointF mousePosQ = mapToScene(event->pos());
     Point mousePos(mousePosQ.x(), mousePosQ.y());
@@ -320,8 +370,7 @@ void LayerEditorWidget::mousePressEvent(QMouseEvent* event) {
             }
             this->update();
         } else if (event->button() == Qt::RightButton) {
-            this->willLine.clear();
-            this->isDrawingNewPolygon = true;
+            this->endDrawing();
         }
     };
 
@@ -471,6 +520,11 @@ void LayerEditorWidget::setFile(const std::string& filename) {
 }
 
 std::string LayerEditorWidget::saveAll(std::string filename, bool isForRedoUndo) {
+    if (!isForRedoUndo && filename.empty())
+        for (const auto point : layerPack[currentLayerName][0].get_points()) {
+            std::cout << std::setprecision(6) << point.x << ' ' << point.y << std::endl;
+        }
+
     if (isForRedoUndo) {
         filename = generateFileName(true);
     } else if (filename.empty() && !currentFileName.empty()) {

@@ -79,6 +79,9 @@ private:
 
     void drawLayer(const std::string& layerName, int alpha = 255);
 
+    void simplifyLastPolygon();
+    void endDrawing();
+
 protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
