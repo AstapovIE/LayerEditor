@@ -508,11 +508,18 @@ std::vector<std::string> LayerEditorWidget::getLayerNames() const {
 void LayerEditorWidget::autoSaveMode(bool isEnabled) {
     isAutoSaveModeEnabled = isEnabled;
     if (isEnabled) {
+        if (currentFileName.empty()) {
+            currentFileName = generateFileName(false);
+        }
         saveAll();
     }
 }
 
 void LayerEditorWidget::setFile(const std::string& filename) {
+    setCurrentTool(PAN);
+    selectedPolygon = -1;
+    currentLayerName = "";
+
     converter.loadJson(filename);
     currentFileName = filename;
 //    undoRedoManager.clearHistory();
