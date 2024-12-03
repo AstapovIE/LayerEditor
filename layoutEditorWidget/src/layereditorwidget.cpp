@@ -183,7 +183,6 @@ LayerEditorWidget::LayerEditorWidget(QWidget* parent)
 
 void LayerEditorWidget::setSelectedLayer(std::string layerName) {
     if (layerName == currentLayerName) return;
-
     setCurrentTool(PAN);
     selectedPolygon = -1;
     currentLayerName = layerName;
@@ -308,7 +307,7 @@ void LayerEditorWidget::endDrawing() {
 }
 
 void LayerEditorWidget::simplifyLastPolygon() {
-    if (currentLayerName.empty() || layerPack[currentLayerName].get_polygons().empty()) return;
+    if (currentLayerName.empty() || !haveLayerName(currentLayerName) || layerPack[currentLayerName].get_polygons().empty()) return;
 
     auto& layer = layerPack[currentLayerName];
     int polygonsCount = layer.get_polygons().size();
@@ -487,14 +486,14 @@ void LayerEditorWidget::wheelEvent(QWheelEvent* event) {
 
 void LayerEditorWidget::addLayer(const std::string& name) {
     layerPack.append_layer(Layer(name.c_str()));
-    update(true);
+    update();
 }
 
 void LayerEditorWidget::copyLayer(const std::string& name, const std::string& copyName) {
     Layer layer = layerPack[name];
     layer.rename(copyName);
     layerPack.append_layer(layer);
-    update(true);
+    update();
 }
 
 void LayerEditorWidget::deleteLayer(const std::string& name) {
@@ -502,7 +501,7 @@ void LayerEditorWidget::deleteLayer(const std::string& name) {
     if (currentLayerName == name) {
         setSelectedLayer("");
     }
-    update(true);
+    update();
 }
 
 std::vector<std::string> LayerEditorWidget::getLayerNames() const {

@@ -57,7 +57,7 @@ Point::operator std::string() const {
 }
 
 // Форматирование числа с плавающей точкой
-std::string Point::format_double(double num) const {
+std::string Point::format_double(double num) {
     std::ostringstream stream;
     stream << std::fixed << std::setprecision(OUTPUT_PRECISION) << num;
     std::string result = stream.str();
@@ -124,6 +124,14 @@ const Point& AbstractPolygon::operator[](size_t index) const {
     return points[index];
 }
 
+bool AbstractPolygon::operator==(const AbstractPolygon& other) const {
+    return this->points == other.points;
+}
+
+bool AbstractPolygon::operator!=(const AbstractPolygon& other) const {
+    return !(*this == other);
+}
+
 AbstractPolygon::operator std::string() const {
     std::string result = "Points: [";
     for (size_t i = 0; i < points.size(); ++i) {
@@ -169,6 +177,14 @@ const std::vector<Hole>& Polygon::get_holes() const {
 
 std::vector<Hole>& Polygon::get_holes() {
     return holes;
+}
+
+bool Polygon::operator==(const Polygon& other) const {
+    return AbstractPolygon::operator==(other) && this->holes == other.holes;
+}
+
+bool Polygon::operator!=(const Polygon& other) const {
+    return !(*this == other);
 }
 
 Polygon::operator std::string() const {
@@ -231,6 +247,31 @@ Polygon& Layer::operator[](size_t index) {
     return polygons[index];
 }
 
+bool Layer::operator==(const Layer& other) const {
+    return this->name == other.name && this->polygons == other.polygons;
+}
+
+bool Layer::operator!=(const Layer& other) const {
+    return !(*this == other);
+}
+
+Layer::operator std::string() const {
+    std::string result = this->get_name();
+    if (!polygons.empty()) {
+        result += " | Polygons: [";
+        for (size_t i = 0; i < polygons.size()-1; ++i) {
+            result += static_cast<std::string>(polygons[i]) = ", ";
+        }
+        result += static_cast<std::string>(polygons[polygons.size()-1]);
+    }
+    return result;
+}
+
+std::ostream& operator<<(std::ostream& os, const Layer& layer) {
+    os << static_cast<std::string>(layer);
+    return os;
+}
+
 
 LayerPack::LayerPack(const std::vector<Layer>& layers) : layers(layers) {}
 
@@ -281,4 +322,29 @@ Layer& LayerPack::operator[](const std::string& name) {
 const Layer& LayerPack::operator[](const std::string& name) const {
     int layer_index = find_layer_index(name);
     return layers[layer_index];
+}
+
+bool LayerPack::operator==(const LayerPack& other) const {
+    return this->layers == other.layers;
+}
+
+bool LayerPack::operator!=(const LayerPack& other) const {
+    return !(*this == other);
+}
+
+LayerPack::operator std::string() const {
+    std::string result;
+    if (!layers.empty()) {
+        result += "Layers: [";
+        for (size_t i = 0; i < layers.size()-1; ++i) {
+            result += static_cast<std::string>(layers[i]) = ", ";
+        }
+        result += static_cast<std::string>(layers[layers.size()-1]);
+    }
+    return result;
+}
+
+std::ostream& operator<<(std::ostream& os, const LayerPack& layer_pack) {
+    os << static_cast<std::string>(layer_pack);
+    return os;
 }

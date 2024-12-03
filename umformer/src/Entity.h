@@ -11,14 +11,11 @@
 #include <iomanip>
 
 
-const double EPSILON = 1e-11;     // Глобальная константа для точности сравнения
-const int OUTPUT_PRECISION = 15;  // Константа для точности вывода
+const double EPSILON = 1e-6;     // Глобальная константа для точности сравнения
+const int OUTPUT_PRECISION = 6;  // Константа для точности вывода
 
 
 class Point {
-private:
-    std::string format_double(double num) const;
-
 public:
     double x; // Координата точки по оси X
     double y; // Координата точки по оси Y
@@ -38,6 +35,8 @@ public:
     std::unordered_map<std::string, double> ravel() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Point& point);
+
+    static std::string format_double(double num);
 };
 
 
@@ -55,6 +54,8 @@ public:
 
     Point& operator[](size_t index);
     const Point& operator[](size_t index) const;
+    bool operator==(const AbstractPolygon& other) const;
+    bool operator!=(const AbstractPolygon& other) const;
 
     operator std::string() const;
 
@@ -80,6 +81,9 @@ public:
     const std::vector<Hole>& get_holes() const;
     std::vector<Hole>& get_holes();
 
+    bool operator==(const Polygon& other) const;
+    bool operator!=(const Polygon& other) const;
+
     operator std::string() const;
 };
 
@@ -104,6 +108,11 @@ public:
 
     Polygon& operator[](size_t index);
     const Polygon& operator[](size_t index) const;
+    bool operator==(const Layer& other) const;
+    bool operator!=(const Layer& other) const;
+
+    operator std::string() const;
+    friend std::ostream& operator<<(std::ostream& os, const Layer& point);
 };
 
 
@@ -126,6 +135,11 @@ public:
 
     Layer& operator[](const std::string& name);
     const Layer& operator[](const std::string& name) const;
+    bool operator==(const LayerPack& other) const;
+    bool operator!=(const LayerPack& other) const;
+
+    operator std::string() const;
+    friend std::ostream& operator<<(std::ostream& os, const LayerPack& point);
 };
 
 
