@@ -30,6 +30,7 @@ add_custom_command(TARGET LayerEditor POST_BUILD COMMAND ${CMAKE_COMMAND} -E cop
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/database)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/layoutEditorWidget)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/processDialog)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/processor)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/umformer)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/helpSystem)
 include_directories(${Qt6_INCLUDE_DIR})
