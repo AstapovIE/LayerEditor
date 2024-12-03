@@ -4,7 +4,7 @@ void Converter::loadJson(const std::string& filename) {
 
     // Чтение JSON-файла и создание объектов
     FILE* fp = fopen(filename.c_str(), "r"); //r for non Windows
-
+    
     if (!fp)
     {
         std::cerr << "Error. Can't open a file " << filename << std::endl;
@@ -16,15 +16,15 @@ void Converter::loadJson(const std::string& filename) {
     long fileSize = ftell(fp);
     fseek(fp, 0, SEEK_SET);
 
-    if (fileSize == 0)
+    if (fileSize == 0) 
     {
         fclose(fp);
         return;
     }
-
+    
     char readBuffer[BUFF_SIZE]; //Parse file
     rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-    rapidjson::Document document;
+    rapidjson::Document document; 
     document.ParseStream(is);
 
     if (document.HasParseError()) {
@@ -36,32 +36,33 @@ void Converter::loadJson(const std::string& filename) {
     const Value& b = document["layers"];
     assert(b.IsArray());
 
-    for (SizeType i = 0; i < b.Size(); i++)
+    layerpack = LayerPack();
+
+    for (SizeType i = 0; i < b.Size(); i++) 
     {
     assert(b[i].IsObject());
     assert(b[i].HasMember("name"));
-
+    
     // Get layer name
     Layer layer{b[i]["name"].GetString()};
-
+    
     assert(b[i].HasMember("polygons"));
     const Value& pol = b[i]["polygons"];
     assert(pol.IsArray());
-
+    
     // Check all polygon in this layer
-    for (SizeType j = 0; j < pol.Size(); j++)
+    for (SizeType j = 0; j < pol.Size(); j++) 
     {
-
         assert(pol[j].IsObject());
         assert(pol[j].HasMember("cords"));
-
+        
         const Value& cordar = pol[j]["cords"];
         assert(cordar.IsArray());
-
+        
         Polygon polygon;
 
         // Coords to polygon
-        for (const Value& cord : cordar.GetArray())
+        for (const Value& cord : cordar.GetArray()) 
         {
 
             Point dot{cord[0].GetDouble(), cord[1].GetDouble()};
@@ -73,12 +74,12 @@ void Converter::loadJson(const std::string& filename) {
         assert(holear.IsArray());
 
         // Holes array to current polygon
-        for (const Value& holee : holear.GetArray())
+        for (const Value& holee : holear.GetArray()) 
         {
 
             Hole hole;
 
-            for (const Value& pt : holee.GetArray())
+            for (const Value& pt : holee.GetArray()) 
             {
 
                 Point point{pt[0].GetDouble(), pt[1].GetDouble()};
@@ -94,7 +95,7 @@ void Converter::loadJson(const std::string& filename) {
     //Add to layer
     this->layerpack.append_layer(layer);
 }
-    fclose(fp);
+    fclose(fp);   
 };
 void Converter::saveToJson(const std::string& filename){
 
@@ -207,11 +208,11 @@ void Converter::saveToJson(const std::string& filename){
     char writeBuffer[BUFF_SIZE];
     FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
     PrettyWriter<FileWriteStream> writer(os);
-    //writer.SetIndent(' ',2);//try this one'\n'
+    //writer.SetIndent(' ',2);//try this one'\n' 
     document.Accept(writer);
     fclose(fp);
-};
-
+    };
+    
 LayerPack& Converter::getLayerPack(){
-    return this->layerpack;
-}
+        return this->layerpack;
+    }

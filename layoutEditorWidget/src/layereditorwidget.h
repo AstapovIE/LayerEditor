@@ -82,6 +82,8 @@ private:
     void simplifyLastPolygon();
     void endDrawing();
 
+    bool haveLayerName(std::string name) const;
+
 protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;

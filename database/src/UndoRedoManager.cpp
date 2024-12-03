@@ -22,8 +22,8 @@ void UndoRedoManager::doChanges(QString path)
     QByteArray fileData = file.readAll();
     file.close();
 
-    db->historyTable->insert(1,currentStage,fileData);//TODO: do fileId
     currentStage++;
+    db->historyTable->insert(1,currentStage,fileData);//TODO: do fileId
 
     if (QFile::remove(path)) {
         qDebug() << "UndoRedoManager: Файл удален:" << path;
@@ -36,8 +36,7 @@ QString UndoRedoManager::undo()
 {
     currentStage--;
     HistoryDTO selection = db->historyTable->select(1,currentStage);
-    saveFile(selection.file);
-    return defaultPath;
+    return saveFile(selection.file);
 
 }
 
@@ -45,8 +44,7 @@ QString UndoRedoManager::redo()
 {
     currentStage++;
     HistoryDTO selection = db->historyTable->select(1,currentStage);
-    saveFile(selection.file);
-    return defaultPath;
+    return saveFile(selection.file);
 }
 
 

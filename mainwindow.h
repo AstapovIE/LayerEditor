@@ -46,6 +46,9 @@ private slots:
 
 
 private:
+    void updateLayerNames(const std::vector<std::string>& newLayerNames);
+
+private:
     Ui::MainWindow *ui;
     LayerEditorWidget* layerEditorWidget;
     UndoRedoManager* manager;

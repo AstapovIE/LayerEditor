@@ -59,6 +59,18 @@ void MainWindow::on_actionNewFile_triggered()
     msg->exec();
 }
 
+void MainWindow::updateLayerNames(const std::vector<std::string>& newLayerNames)
+{
+    ui->listOfLayers->clear();
+
+    for (const std::string& name : newLayerNames) {
+        QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(name));
+        item->setTextAlignment(Qt::AlignCenter);
+        ui->listOfLayers->addItem(item);
+    }
+}
+
+
 void MainWindow::on_actionOpenFile_triggered()
 {
     if (QMessageBox::question(this, "Confirm", "Are you sure you want to open a file?") == QMessageBox::Yes) {
@@ -68,18 +80,8 @@ void MainWindow::on_actionOpenFile_triggered()
         if (!filename.isEmpty()) {
             layerEditorWidget->setFile(filename.toStdString());
 
-            // Получить список строк с названиями слоёв
-            std::vector<std::string> layer_names = layerEditorWidget->getLayerNames();
+            updateLayerNames(layerEditorWidget->getLayerNames());
 
-            // Очистить QListWidget перед добавлением новых элементов
-            ui->listOfLayers->clear();
-
-            // Добавить элементы в QListWidget и центрировать их
-            for (const std::string& name : layer_names) {
-                QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(name));
-                item->setTextAlignment(Qt::AlignCenter);
-                ui->listOfLayers->addItem(item);
-            }
             QFileInfo fileInfo(filename);
             QMessageBox::information(this, "Open File", "File " + fileInfo.fileName() + " opened");
         } else {
@@ -105,10 +107,12 @@ void MainWindow::on_actionSaveFile_triggered()
 
 void MainWindow::on_actionRedo_triggered() {
     layerEditorWidget->redo();
+    updateLayerNames(layerEditorWidget->getLayerNames());
 }
 
 void MainWindow::on_actionUndo_triggered() {
     layerEditorWidget->undo();
+    updateLayerNames(layerEditorWidget->getLayerNames());
 }
 
 void MainWindow::onPanToolClicked() {
@@ -242,13 +246,10 @@ void MainWindow::on_addNewLayer_clicked()
         }
     }
 
-    // Создание нового элемента и добавление его в список
-    QListWidgetItem *newItem = new QListWidgetItem(newLayerName);
-    newItem->setTextAlignment(Qt::AlignCenter);
-    ui->listOfLayers->addItem(newItem);
-
     // Вызов метода добавления слоя в layerEditorWidget
     layerEditorWidget->addLayer(newLayerName.toStdString());
+
+    updateLayerNames(layerEditorWidget->getLayerNames());
 
     // Показ сообщения об успешном добавлении слоя
     QMessageBox::information(this, "Слой добавлен", "Новый слой '" + newLayerName + "' успешно добавлен.");
@@ -289,13 +290,10 @@ void MainWindow::on_copyLayer_clicked()
             }
         }
 
-        // Создание нового элемента и добавление его в список
-        QListWidgetItem *newItem = new QListWidgetItem(copyLayerName);
-        newItem->setTextAlignment(Qt::AlignCenter);
-        ui->listOfLayers->addItem(newItem);
-
         // Вызов метода копирования слоя в layerEditorWidget
         layerEditorWidget->copyLayer(originalLayerName.toStdString(), copyLayerName.toStdString());
+
+        updateLayerNames(layerEditorWidget->getLayerNames());
 
         // Показ сообщения об успешном копировании слоя
         QMessageBox::information(this, "Слой скопирован", "Копия слоя '" + copyLayerName + "' успешно добавлена.");
@@ -315,11 +313,10 @@ void MainWindow::on_deleteLayer_clicked()
     {
         QString layerName = selectedItem->text();
 
-        // Удаление из списка
-        delete selectedItem;
-
         // Вызов метода удаления слоя
         layerEditorWidget->deleteLayer(layerName.toStdString());
+
+        updateLayerNames(layerEditorWidget->getLayerNames());
 
         // Показ сообщения
         QMessageBox::information(this, "Удаление слоя", "Слой '" + layerName + "' удален.");

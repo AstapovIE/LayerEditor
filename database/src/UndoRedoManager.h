@@ -29,7 +29,6 @@ public:
 private:
     int currentStage = 0;
     DatabaseController *db;
-    QString defaultPath = "/database/temp.txt";
     QString saveFile(QByteArray byteArray);
 };
 

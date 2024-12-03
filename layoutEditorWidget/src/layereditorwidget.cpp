@@ -223,6 +223,10 @@ ToolType LayerEditorWidget::getCurrentTool() const {
 }
 
 void LayerEditorWidget::update(bool saveForRedoUndo) {
+    if (!haveLayerName(currentLayerName)) {
+        currentLayerName.clear();
+    }
+
     scene->removeItem(willLine.getDrawnItem());
     scene->clear();
 
@@ -522,7 +526,7 @@ void LayerEditorWidget::setFile(const std::string& filename) {
 
     converter.loadJson(filename);
     currentFileName = filename;
-//    undoRedoManager.clearHistory();
+    undoRedoManager.clearHistory();
     update();
 }
 
@@ -548,4 +552,9 @@ void LayerEditorWidget::undo() {
     auto filename = undoRedoManager.undo();
     converter.loadJson(filename.toStdString());
     update(false);
+}
+
+bool LayerEditorWidget::haveLayerName(std::string name) const {
+    const auto& layerNames = layerPack.get_layers_names();
+    return std::find(layerNames.begin(), layerNames.end(), name) != layerNames.end();
 }
