@@ -172,7 +172,10 @@ void MainWindow::on_processorButton_clicked()
 
         // Формирование аргументов для запуска process
         QStringList arguments;
+        // sourceFileName = sourceFileName.mid(0);
+        qDebug() << sourceFileName;
         arguments << sourceFileName << layer1 << operation;
+        // qDebug() << arguments;
 
         if (operation == "unite" || operation == "intersect" || operation == "subtract") {
             arguments << layer2 << "to" << layer3;
@@ -187,14 +190,15 @@ void MainWindow::on_processorButton_clicked()
         if (!outputFile.isEmpty()) {
             arguments << "-o" << outputFile;
         }
-
+        qDebug() << arguments;
         QProcess process;
 
 
 
         //QString program = "../../processDialog/src/fake_processor.exe"; //если файл в исходниках
         // QString program = "./fake_processor.exe"; // если файл в билде..
-        QString program = "./processor/processor.exe";
+        // QString program = "./processor/processor.exe";
+        QString program = "../../processor.exe";
         // QString program = "../../fake_processor.exe";
         process.start(program, arguments);
         process.waitForFinished();
