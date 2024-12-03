@@ -557,3 +557,7 @@ bool LayerEditorWidget::haveLayerName(std::string name) const {
     const auto& layerNames = layerPack.get_layers_names();
     return std::find(layerNames.begin(), layerNames.end(), name) != layerNames.end();
 }
+
+std::string LayerEditorWidget::getCurrentFileName() const {
+    return currentFileName;
+}
