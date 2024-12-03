@@ -73,6 +73,8 @@ public:
 
     void update(bool saveForRedoUndo = true);
 
+    std::string getCurrentFileName() const;
+
 private:
     void drawSimplePolygon(QPainterPath& path, const std::vector<Point>& polygon);
     int insidePolygonIdx(Point point);
