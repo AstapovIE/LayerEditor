@@ -15,7 +15,7 @@ namespace {
         }
         return qpolygon.containsPoint(QPointF(point.x, point.y), Qt::OddEvenFill);
     }
-    
+
     bool isInsidePolygon(const Polygon& polygon, Point point) {
         for (const auto& hole : polygon.get_holes()) {
             if (isInsideSimplePolygon(hole.get_points(), point)) {
@@ -24,7 +24,7 @@ namespace {
         }
         return isInsideSimplePolygon(polygon.get_points(), point);
     }
-    
+
     void movePolygon(Polygon& polygon, Point delta) {
         for (int i=0; i < polygon.get_points().size(); ++i) {
             polygon[i] = polygon[i] + delta;
@@ -526,7 +526,7 @@ void LayerEditorWidget::setFile(const std::string& filename) {
     update();
 }
 
-std::string LayerEditorWidget::saveAll(std::string filename, bool isForRedoUndo) {    
+std::string LayerEditorWidget::saveAll(std::string filename, bool isForRedoUndo) {
     if (isForRedoUndo) {
         filename = generateFileName(true);
     } else if (filename.empty() && !currentFileName.empty()) {

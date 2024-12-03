@@ -25,8 +25,8 @@ class HistoryDTO
         //:FileDTO
 {
 public:
+    int id;
     int fileId;
-    QString name;
     QByteArray file;
     int stage;
 };
@@ -51,6 +51,7 @@ class HistoryTable:public BaseTable
 public:
     HistoryDTO select(int fileId,int stage);
     void insert(int fileId,int stage,QByteArray file);
+    void clearAll();
     //QVector<InfoAboutElement> select_all();
 };
 

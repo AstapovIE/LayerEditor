@@ -35,12 +35,12 @@ HistoryDTO HistoryTable::select(int fileId,int stage)
     QSqlRecord rec = my_query.record();
     my_query.first();
 
-    QString name = my_query.value(rec.indexOf("name")).toString();
+    int id = my_query.value(rec.indexOf("id")).toInt();
     QByteArray file = my_query.value(rec.indexOf("file")).toByteArray();
 
 
     //qInfo() << "Row with id =" <<id<<"Name = "<< name <<"Speed ="<< speed <<"Mass ="<< mass;
-    HistoryDTO historyDTO = {fileId, name, file, stage};
+    HistoryDTO historyDTO = {id,fileId,file, stage};
     return historyDTO;
 }
 
@@ -57,6 +57,13 @@ void HistoryTable::insert(int fileId,int stage,QByteArray file)
     } else {
         qDebug() << "Файл успешно сохранен в БД";
     }
+}
+
+void HistoryTable::clearAll()
+{
+    QSqlQuery my_query;
+    my_query.prepare("DELETE FROM HISTORY");
+    my_query.exec();
 }
 
 

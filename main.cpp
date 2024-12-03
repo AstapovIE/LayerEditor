@@ -12,7 +12,6 @@ int main(int argc, char *argv[])
     w.setWindowTitle("LayerEditor");
     w.show();
 
-    UndoRedoManager manager = UndoRedoManager();
     return a.exec();
 }
 

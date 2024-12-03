@@ -36,10 +36,10 @@ include_directories(${Qt6_INCLUDE_DIR})
 
 target_include_directories(LayerEditor PRIVATE processDialog/src layoutEditorWidget/src helpSystem/src)
 target_link_libraries(LayerEditor
-	Qt6::Core
-	Qt6::Gui
-	Qt6::Widgets
-	Qt6::Sql
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        Qt6::Sql
 	layoutEditorWidget
 	processDialog
 	HelpSystem
