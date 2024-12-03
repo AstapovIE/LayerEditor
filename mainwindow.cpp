@@ -197,8 +197,8 @@ void MainWindow::on_processorButton_clicked()
 
         //QString program = "../../processDialog/src/fake_processor.exe"; //если файл в исходниках
         // QString program = "./fake_processor.exe"; // если файл в билде..
-        // QString program = "./processor/processor.exe";
-        QString program = "../../processor.exe";
+        QString program = "./processor/processor.exe";
+        // QString program = "../../processor.exe";
         // QString program = "../../fake_processor.exe";
         process.start(program, arguments);
         process.waitForFinished();
