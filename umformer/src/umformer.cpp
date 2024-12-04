@@ -198,6 +198,7 @@ void Converter::saveToJson(const std::string& filename){
 
     //Write to file
     FILE* fp = fopen(filename.c_str(), "wb");// w for Non-windows
+    //FILE* fp = fopen(filename.c_str(), "w");// w for Non-windows
 
     if(!fp)
     {

@@ -68,6 +68,8 @@ void MainWindow::updateLayerNames(const std::vector<std::string>& newLayerNames)
         item->setTextAlignment(Qt::AlignCenter);
         ui->listOfLayers->addItem(item);
     }
+    qDebug() << " ---------- updated ---------- " << filename;
+
 }
 
 
@@ -211,6 +213,10 @@ void MainWindow::on_processorButton_clicked()
         } else {
             QMessageBox::critical(this, "Error", error);
         }
+        // Обновляем список слоев в редакторе
+        layerEditorWidget->update();
+        updateLayerNames(layerEditorWidget->getLayerNames());
+
     }
 }
 
